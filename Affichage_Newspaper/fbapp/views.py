@@ -5,14 +5,10 @@ app.config.from_object('config')
 
 from .utils import find_article
 
-article = find_article(1)
 
-@app.route('/projet/')
+@app.route('/')
 def projet():
-    return (render_template('projet.html',
-                            title = article.title,
-                            text = article.text))
-
-
-if __name__ == "__main__":
-    app.run()
+    article_c = find_article(1)
+    return render_template('projet.html',
+                            title = article_c.title,
+                            text = article_c.text)
