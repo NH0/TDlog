@@ -1,10 +1,23 @@
 {% extends 'base.html' %}
 
 {% block content %}
-<!-- Header -->
-<header>
-  <h2>{{ title }}</h2>
-  <p>{{ text }}</p>
-</header>
+
+<div class="container">
+  <div class="row">
+    <div class="col-lg-12">
+      <h1>{{ title }}</h1>
+    </div>
+  </div>
+  <div class="row">
+    <div class="col-lg-12">
+      <p><em>{{ authors }}</em></p>
+    </div>
+  </div>
+  <div class="row">
+    <div class="col-lg-12">
+      <p>{{ text }}</p>
+    </div>
+  </div>
+</div>
 
 {% endblock %}

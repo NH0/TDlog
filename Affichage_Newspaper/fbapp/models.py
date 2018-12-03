@@ -13,12 +13,14 @@ class Article_c(db.Model):
     url = db.Column(db.String(400), nullable=False)
     title = db.Column(db.String(200), nullable=False)
     text = db.Column(db.String(), nullable=False)
+    # authors = db.Column(db.String(), nullable=False) A IMPLEMENTER PLUS TARD: ATTENTION, C'EST UNE LISTE D'AUTEURS QUE L'ON RECOIT GRACE A LA LIBRAIRIE PYTHON
     # keywords =
 
     def __init__(self, url, title, text):
         self.url = url
         self.title = title
         self.text = text
+        # self.authors = authors
         # self.keywords =
 
 
