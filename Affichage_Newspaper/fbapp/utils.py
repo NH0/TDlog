@@ -24,6 +24,6 @@ def find_article_by_keywords(keywords): #prend en argument une liste de string c
 def listTostring(keywords): # Pour l'affichage lorsqu'aucun article n'est trouvé
     keystring = ""
     for key in keywords:
-        keystring += key + "; "
+        keystring += key + ", "
     keystring = keystring[:-2]
     return keystring
