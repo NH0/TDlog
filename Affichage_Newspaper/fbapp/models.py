@@ -74,7 +74,7 @@ def init_db():
         article.parse()
         db.session.add(Article_c(url = url, title = article.title, text = article.text, keywords = listToString(keyword_example)))
     add_article_to_db('https://www.theguardian.com/media/2018/nov/16/bbc-women-complain-andrew-neil-tweet-observer-journalist-carole-cadwalladr',
-                        ['Journalist','twitter'])
+                        ['Journalist','twitter','sexism'])
     add_article_to_db('https://edition.cnn.com/2018/12/08/europe/ndrangheta-mafia-raids-analysis-intl/index.html',
                         ['Mafia','analysis'])
     add_article_to_db('https://www.lemonde.fr/international/article/2018/12/09/migration-marine-le-pen-et-steve-bannon-denoncent-a-bruxelles-le-pacte-avec-le-diable_5394839_3210.html',
