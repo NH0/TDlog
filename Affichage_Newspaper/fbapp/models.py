@@ -26,34 +26,34 @@ class Article_c(db.Model):
         # self.authors = authors
 
 
+
+# def google_search_website(keywords, web_site, nb_url):
+#     """
+#     input :
+#     1- keywords : une liste de mots clefs de la forme ['keyword1','keyword2',...]
+#     2- web_site : une string du site web sur lequel chercher le/les articles, ex : 'www.theguardian.com'
+#     3- nb_article : un entier, nombre d'url a selectionner
+#     output :
+#     1- sites = une liste des url des articles trouvés sur le web de la forme ['url1','url2',...]
+#     """
+#     query = ''
+#     sites = []
+#     for keyword in keywords:
+#         query += keyword + ' '
+#     query += 'site:' + web_site
+#     print(query)
+#     for url in search(query, tld="com", num=nb_url, stop=nb_url, pause=2):
+#         print(url)
+#         sites.append(url)
+#     return(sites)
+
+
+# keyword_example = ['air france', 'klm', 'cultural', 'differences']
+# url_example = google_search_website(keyword_example, 'www.theguardian.com', 1)
+
 """
 keywords doit être une liste de keywords : ['keyword1','keyword2','keyword3']
 """
-
-def google_search_website(keywords, web_site, nb_url):
-    """
-    input :
-    1- keywords : une liste de mots clefs de la forme ['keyword1','keyword2',...]
-    2- web_site : une string du site web sur lequel chercher le/les articles, ex : 'www.theguardian.com'
-    3- nb_article : un entier, nombre d'url a selectionner
-    output :
-    1- sites = une liste des url des articles trouvés sur le web de la forme ['url1','url2',...]
-    """
-    query = ''
-    sites = []
-    for keyword in keywords:
-        query += keyword + ' '
-    query += 'site:' + web_site
-    print(query)
-    for url in search(query, tld="com", num=nb_url, stop=nb_url, pause=2):
-        print(url)
-        sites.append(url)
-    return(sites)
-
-
-keyword_example = ['air france', 'klm', 'cultural', 'differences']
-url_example = google_search_website(keyword_example, 'www.theguardian.com', 1)
-
 def add_article_to_db(url, keywords): # Automatisation du processus pour ajouter une entrée à la base de données, pour l'instant il faut renseigner soi meme les keywords
     article = Article(url)
     article.download()
