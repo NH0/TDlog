@@ -25,9 +25,35 @@ class Article_c(db.Model):
         self.keywords = keywords
         # self.authors = authors
 
+
 """
 keywords doit être une liste de keywords : ['keyword1','keyword2','keyword3']
 """
+
+def google_search_website(keywords, web_site, nb_url):
+    """
+    input :
+    1- keywords : une liste de mots clefs de la forme ['keyword1','keyword2',...]
+    2- web_site : une string du site web sur lequel chercher le/les articles, ex : 'www.theguardian.com'
+    3- nb_article : un entier, nombre d'url a selectionner
+    output :
+    1- sites = une liste des url des articles trouvés sur le web de la forme ['url1','url2',...]
+    """
+    query = ''
+    sites = []
+    for keyword in keywords:
+        query += keyword + ' '
+    query += 'site:' + web_site
+    print(query)
+    for url in search(query, tld="com", num=nb_url, stop=nb_url, pause=2):
+        print(url)
+        sites.append(url)
+    return(sites)
+
+
+keyword_example = ['air france', 'klm', 'cultural', 'differences']
+url_example = google_search_website(keyword_example, 'www.theguardian.com', 1)
+
 def add_article_to_db(url, keywords): # Automatisation du processus pour ajouter une entrée à la base de données, pour l'instant il faut renseigner soi meme les keywords
     article = Article(url)
     article.download()
@@ -41,6 +67,11 @@ def add_article_to_db(url, keywords): # Automatisation du processus pour ajouter
 def init_db():
     db.drop_all()
     db.create_all()
+    for url in url_example:
+        article = Article(url)
+        article.download()
+        article.parse()
+        db.session.add(Article_c(url = url, title = article.title, text = article.text))
     add_article_to_db('https://www.theguardian.com/media/2018/nov/16/bbc-women-complain-andrew-neil-tweet-observer-journalist-carole-cadwalladr',
                         ['Journalist','tweeter'])
     add_article_to_db('https://edition.cnn.com/2018/12/08/europe/ndrangheta-mafia-raids-analysis-intl/index.html',
