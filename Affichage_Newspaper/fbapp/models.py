@@ -13,29 +13,34 @@ class Article_c(db.Model):
     url = db.Column(db.String(400), nullable=False)
     title = db.Column(db.String(200), nullable=False)
     text = db.Column(db.String(), nullable=False)
+    keywords = db.Column(db.String(), nullable=False)
     # authors = db.Column(db.String(), nullable=False) A IMPLEMENTER PLUS TARD: ATTENTION, C'EST UNE LISTE D'AUTEURS QUE L'ON RECOIT GRACE A LA LIBRAIRIE PYTHON
-    #keywords= db.Column(db.)
 
-    def __init__(self, url, title, text):
+
+    def __init__(self, url, title, text, keywords):
         self.url = url
         self.title = title
         self.text = text
+        self.keywords = keywords
         # self.authors = authors
-        # self.keywords =
 
-
-def init_db():
-    db.drop_all()
-    db.create_all()
-    url = 'https://www.theguardian.com/media/2018/nov/16/bbc-women-complain-andrew-neil-tweet-observer-journalist-carole-cadwalladr'
+def add_article_to_db(url, keywords): # Automatisation du processus pour ajouter une entrée à la base de données, pour l'instant il faut renseigner soi meme les keywords
     article = Article(url)
     article.download()
     article.parse()
     db.session.add(Article_c(url = url,
                             title = article.title,
-                            text = article.text))
-    db.session.add(Article_c('https://www.bbc.com/news/uk-46334649',
-                            "EU leaders agree UK's Brexit deal at Brussels summit",
-                            'Toujours pas de texte'))
+                            text = article.text,
+                            keywords = keywords))
+
+def init_db():
+    db.drop_all()
+    db.create_all()
+    add_article_to_db('https://www.theguardian.com/media/2018/nov/16/bbc-women-complain-andrew-neil-tweet-observer-journalist-carole-cadwalladr',
+                        'Journalist')
+    add_article_to_db('https://edition.cnn.com/2018/12/08/europe/ndrangheta-mafia-raids-analysis-intl/index.html',
+                        'Mafia')
+    add_article_to_db('https://www.lemonde.fr/international/article/2018/12/09/migration-marine-le-pen-et-steve-bannon-denoncent-a-bruxelles-le-pacte-avec-le-diable_5394839_3210.html',
+                        'Migration')
     db.session.commit()
     lg.warning('Database initialized!')
