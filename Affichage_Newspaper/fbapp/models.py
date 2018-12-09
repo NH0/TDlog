@@ -42,10 +42,10 @@ def init_db():
     db.drop_all()
     db.create_all()
     add_article_to_db('https://www.theguardian.com/media/2018/nov/16/bbc-women-complain-andrew-neil-tweet-observer-journalist-carole-cadwalladr',
-                        ['Journalist'])
+                        ['Journalist','tweeter'])
     add_article_to_db('https://edition.cnn.com/2018/12/08/europe/ndrangheta-mafia-raids-analysis-intl/index.html',
-                        ['Mafia'])
+                        ['Mafia','analysis'])
     add_article_to_db('https://www.lemonde.fr/international/article/2018/12/09/migration-marine-le-pen-et-steve-bannon-denoncent-a-bruxelles-le-pacte-avec-le-diable_5394839_3210.html',
-                        ['Migration'])
+                        ['Migration','Marine le Pen'])
     db.session.commit()
     lg.warning('Database initialized!')
