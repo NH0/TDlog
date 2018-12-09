@@ -19,7 +19,8 @@ def projet():
         return render_template('projet.html',
                                 title = article_c[0].title,
                                 text = article_c[0].text,
-                                keywords = stringOfKeywords)
+                                keywords = article_c[0].keywords,
+                                searchedKeywords = stringOfKeywords)
 
 @app.route('/', methods=['GET', 'POST'])
 @app.route('/home/')
