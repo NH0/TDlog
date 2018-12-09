@@ -14,7 +14,7 @@ class Article_c(db.Model):
     title = db.Column(db.String(200), nullable=False)
     text = db.Column(db.String(), nullable=False)
     # authors = db.Column(db.String(), nullable=False) A IMPLEMENTER PLUS TARD: ATTENTION, C'EST UNE LISTE D'AUTEURS QUE L'ON RECOIT GRACE A LA LIBRAIRIE PYTHON
-    # keywords =
+    #keywords= db.Column(db.)
 
     def __init__(self, url, title, text):
         self.url = url
