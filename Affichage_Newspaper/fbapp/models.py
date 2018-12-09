@@ -2,6 +2,7 @@ from flask_sqlalchemy import SQLAlchemy
 import logging as lg
 import enum
 from .views import app
+from .basicFunctions import listToString
 import config as cf
 from newspaper import Article
 
@@ -24,23 +25,27 @@ class Article_c(db.Model):
         self.keywords = keywords
         # self.authors = authors
 
+"""
+keywords doit être une liste de keywords : ['keyword1','keyword2','keyword3']
+"""
 def add_article_to_db(url, keywords): # Automatisation du processus pour ajouter une entrée à la base de données, pour l'instant il faut renseigner soi meme les keywords
     article = Article(url)
     article.download()
     article.parse()
+    stringOfKeywords = listTostring(keywords) # insensible à la casse, string avec les mots clés séparés par une ','
     db.session.add(Article_c(url = url,
                             title = article.title,
                             text = article.text,
-                            keywords = keywords))
+                            keywords = stringOfKeywords))
 
 def init_db():
     db.drop_all()
     db.create_all()
     add_article_to_db('https://www.theguardian.com/media/2018/nov/16/bbc-women-complain-andrew-neil-tweet-observer-journalist-carole-cadwalladr',
-                        'Journalist')
+                        ['Journalist'])
     add_article_to_db('https://edition.cnn.com/2018/12/08/europe/ndrangheta-mafia-raids-analysis-intl/index.html',
-                        'Mafia')
+                        ['Mafia'])
     add_article_to_db('https://www.lemonde.fr/international/article/2018/12/09/migration-marine-le-pen-et-steve-bannon-denoncent-a-bruxelles-le-pacte-avec-le-diable_5394839_3210.html',
-                        'Migration')
+                        ['Migration'])
     db.session.commit()
     lg.warning('Database initialized!')
