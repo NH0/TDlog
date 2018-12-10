@@ -3,7 +3,7 @@ from flask import Flask, render_template, url_for, request
 app = Flask(__name__)
 app.config.from_object('config')
 
-from .utils import find_article, find_article_by_keywords, article_readable_in_html
+from .utils import find_article, find_article_by_keywords
 from .basicFunctions import listToString
 
 
