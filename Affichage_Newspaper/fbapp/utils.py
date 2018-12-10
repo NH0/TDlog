@@ -10,6 +10,7 @@ def find_article(idarticle):
 Renvoie une liste d'articles contenant un des mots clés en argument
 Si l'article n'est pas dans la base de données, renvoie 0
 """
+
 def find_article_by_keywords(keywords): #prend en argument une liste de string contenant les mots clés
     articlesMatched = []
     for key in keywords:
