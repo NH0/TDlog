@@ -2,7 +2,7 @@ from flask_sqlalchemy import SQLAlchemy
 import logging as lg
 import enum
 from .views import app
-from .basicFunctions import listToString
+from .basicFunctions import *
 import config as cf
 from newspaper import Article
 
@@ -25,10 +25,6 @@ class Article_c(db.Model):
         self.keywords = keywords
         # self.authors = authors
 
-
-"""
-keywords doit être une liste de keywords : ['keyword1','keyword2','keyword3']
-"""
 def add_article_to_db(url, keywords): # Automatisation du processus pour ajouter une entrée à la base de données, pour l'instant il faut renseigner soi meme les keywords
     article = Article(url)
     article.download()
@@ -38,6 +34,10 @@ def add_article_to_db(url, keywords): # Automatisation du processus pour ajouter
                             title = article.title,
                             text = article.text,
                             keywords = stringOfKeywords))
+
+"""
+keywords doit être une liste de keywords : ['keyword1','keyword2','keyword3']
+"""
 
 def init_db():
     db.drop_all()

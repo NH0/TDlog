@@ -1,10 +1,11 @@
 from flask import Flask, render_template, url_for, request
+from flask_sqlalchemy import SQLAlchemy
 
 app = Flask(__name__)
 app.config.from_object('config')
+db = SQLAlchemy(app)
 
-from .utils import find_article, find_article_by_keywords
-from .basicFunctions import *
+from .utils import *
 from newspaper import Article
 
 @app.route('/article', methods=['GET', 'POST'])
@@ -12,15 +13,16 @@ def projet():
     keywords = request.form['KeyWords'].replace(" ","").split(',') #créer une liste de string contenant les mots-clés
     for key in keywords:
         key = key.lower() # insensible à la casse
-    article_c = find_article_by_keywords(keywords)
     stringOfKeywords = listToString(keywords)
-    print(stringOfKeywords)
+    article_c = find_article_by_keywords(keywords)
     if (article_c == 0):
-        return render_template('erreur.html',keywords=stringOfKeywords)
-    else: # Pour l'instant renvoie le premier article uniquement
-        return render_template('projet.html',
-                                articleList = article_c,
-                                searchedKeywords = stringOfKeywords)
+        article_c = find_article_online(keywords, '')
+        # for article in article_c:
+        #     db.session.add(article)
+        # db.session.commit()
+    return render_template('projet.html',
+                            articleList = article_c,
+                            searchedKeywords = stringOfKeywords)
 
 
 @app.route('/', methods=['GET', 'POST'])

@@ -3,6 +3,10 @@ from nltk.corpus import wordnet
 from itertools import chain
 
 from fbapp.models import Article_c
+from .basicFunctions import *
+from newspaper import Article
+
+
 
 def find_article(idarticle):
     article_c = Article_c.query.filter(Article_c.idarticle == idarticle).all()
@@ -37,3 +41,17 @@ def findSynonyms(word):
             for hypo in hypoList.lemma_names():
                 synonyms.add(hypo)
     return (synonyms)
+
+def find_article_online(keywords, website):
+    stringOfKeywords = listToString(keywords) # insensible à la casse, string avec les mots clés séparés par une ','
+    articlesMatched = []
+    sites = google_search_website(keywords, website, 1)
+    for url in sites:
+        article = Article(url)
+        article.download()
+        article.parse()
+        articlesMatched.append(Article_c(url = url,
+                                title = article.title,
+                                text = article.text,
+                                keywords = stringOfKeywords))
+    return(articlesMatched)
