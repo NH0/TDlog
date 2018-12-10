@@ -1,25 +1,3 @@
-<<<<<<< HEAD
-from nltk.corpus import wordnet
-from itertools import chain
-from googlesearch import search
-import requests
-
-def findSynonyms(word):
-    SetOfSynonyms = wordnet.synsets(word)
-    synonyms = set([]) # Unique elements
-    for syn in SetOfSynonyms:
-        for name in syn.lemma_names():
-            synonyms.add(name)
-        for hyperList in syn.hypernyms():
-            for hyper in hyperList.lemma_names():
-                synonyms.add(hyper)
-        for hypoList in syn.hyponyms():
-            for hypo in hypoList.lemma_names():
-                synonyms.add(hypo)
-    return (synonyms)
-
-=======
->>>>>>> 8d471816f3b4c72de40a86eb4d49fa34d3d6ceb8
 def listToString(keywords): # Pour l'affichage lorsqu'aucun article n'est trouvé
     keystring = ""
     for key in keywords:
