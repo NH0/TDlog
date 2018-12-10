@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 from nltk.corpus import wordnet
 from itertools import chain
 from googlesearch import search
@@ -17,6 +18,8 @@ def findSynonyms(word):
                 synonyms.add(hypo)
     return (synonyms)
 
+=======
+>>>>>>> 8d471816f3b4c72de40a86eb4d49fa34d3d6ceb8
 def listToString(keywords): # Pour l'affichage lorsqu'aucun article n'est trouvé
     keystring = ""
     for key in keywords:

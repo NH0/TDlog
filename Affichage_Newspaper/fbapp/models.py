@@ -26,6 +26,34 @@ class Article_c(db.Model):
         # self.authors = authors
 
 
+<<<<<<< HEAD
+=======
+
+def google_search_website(keywords, web_site, nb_url):
+    """
+    input :
+    1- keywords : une liste de mots clefs de la forme ['keyword1','keyword2',...]
+    2- web_site : une string du site web sur lequel chercher le/les articles, ex : 'www.theguardian.com'
+    3- nb_article : un entier, nombre d'url a selectionner
+    output :
+    1- sites = une liste des url des articles trouvés sur le web de la forme ['url1','url2',...]
+    """
+    query = ''
+    sites = []
+    for keyword in keywords:
+        query += keyword + ' '
+    query += 'site:' + web_site
+    print(query)
+    for url in search(query, tld="com", num=nb_url, stop=nb_url, pause=2):
+        print(url)
+        sites.append(url)
+    return(sites)
+
+
+keyword_example = ['air', 'france', 'klm', 'cultural', 'differences']
+url_example = google_search_website(keyword_example, 'www.theguardian.com', 1)
+
+>>>>>>> 8d471816f3b4c72de40a86eb4d49fa34d3d6ceb8
 """
 keywords doit être une liste de keywords : ['keyword1','keyword2','keyword3']
 """
