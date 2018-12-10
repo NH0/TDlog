@@ -27,9 +27,6 @@ class Article_c(db.Model):
         # self.authors = authors
 
 
-"""
-keywords doit être une liste de keywords : ['keyword1','keyword2','keyword3']
-"""
 
 def google_search_website(keywords, web_site, nb_url):
     """
@@ -53,8 +50,11 @@ def google_search_website(keywords, web_site, nb_url):
 
 
 keyword_example = ['air', 'france', 'klm', 'cultural', 'differences']
-url_example = google_search_website(keyword_example, 'www.theguardian.com', 1)
+# url_example = google_search_website(keyword_example, 'www.theguardian.com', 1)
 
+"""
+keywords doit être une liste de keywords : ['keyword1','keyword2','keyword3']
+"""
 def add_article_to_db(url, keywords): # Automatisation du processus pour ajouter une entrée à la base de données, pour l'instant il faut renseigner soi meme les keywords
     article = Article(url)
     article.download()
@@ -68,13 +68,13 @@ def add_article_to_db(url, keywords): # Automatisation du processus pour ajouter
 def init_db():
     db.drop_all()
     db.create_all()
-    for url in url_example:
-        article = Article(url)
-        article.download()
-        article.parse()
-        db.session.add(Article_c(url = url, title = article.title, text = article.text, keywords = listToString(keyword_example)))
+    # for url in url_example:
+    #     article = Article(url)
+    #     article.download()
+    #     article.parse()
+    #     db.session.add(Article_c(url = url, title = article.title, text = article.text, keywords = listToString(keyword_example)))
     add_article_to_db('https://www.theguardian.com/media/2018/nov/16/bbc-women-complain-andrew-neil-tweet-observer-journalist-carole-cadwalladr',
-                        ['Journalist','tweeter'])
+                        ['Journalist','twitter','sexism'])
     add_article_to_db('https://edition.cnn.com/2018/12/08/europe/ndrangheta-mafia-raids-analysis-intl/index.html',
                         ['Mafia','analysis'])
     add_article_to_db('https://www.lemonde.fr/international/article/2018/12/09/migration-marine-le-pen-et-steve-bannon-denoncent-a-bruxelles-le-pacte-avec-le-diable_5394839_3210.html',
