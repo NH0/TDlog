@@ -50,7 +50,7 @@ def google_search_website(keywords, web_site, nb_url):
 
 
 keyword_example = ['air', 'france', 'klm', 'cultural', 'differences']
-# url_example = google_search_website(keyword_example, 'www.theguardian.com', 1)
+url_example = google_search_website(keyword_example, 'www.theguardian.com', 1)
 
 """
 keywords doit être une liste de keywords : ['keyword1','keyword2','keyword3']
