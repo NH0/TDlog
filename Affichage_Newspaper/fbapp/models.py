@@ -68,11 +68,11 @@ def add_article_to_db(url, keywords): # Automatisation du processus pour ajouter
 def init_db():
     db.drop_all()
     db.create_all()
-    for url in url_example:
-        article = Article(url)
-        article.download()
-        article.parse()
-        db.session.add(Article_c(url = url, title = article.title, text = article.text, keywords = listToString(keyword_example)))
+    # for url in url_example:
+    #     article = Article(url)
+    #     article.download()
+    #     article.parse()
+    #     db.session.add(Article_c(url = url, title = article.title, text = article.text, keywords = listToString(keyword_example)))
     add_article_to_db('https://www.theguardian.com/media/2018/nov/16/bbc-women-complain-andrew-neil-tweet-observer-journalist-carole-cadwalladr',
                         ['Journalist','twitter','sexism'])
     add_article_to_db('https://edition.cnn.com/2018/12/08/europe/ndrangheta-mafia-raids-analysis-intl/index.html',
