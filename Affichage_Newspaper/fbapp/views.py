@@ -8,7 +8,7 @@ from .basicFunctions import listToString
 
 
 @app.route('/article', methods=['GET', 'POST'])
-def projetBis():
+def projet():
     keywords = request.form['KeyWords'].replace(" ","").split(',') #créer une liste de string contenant les mots-clés
     for key in keywords:
         key = key.lower() # insensible à la casse
