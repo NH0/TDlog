@@ -16,7 +16,8 @@ def projet():
     stringOfKeywords = listToString(keywords)
     article_c = find_article_by_keywords(keywords)
     if (article_c == 0):
-        article_c = find_article_online(keywords, '')
+        #article_c = find_article_online(keywords, '')
+        article_c = find_article_news(keywords)
         # for article in article_c:
         #     db.session.add(article)
         # db.session.commit()

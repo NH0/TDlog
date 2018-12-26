@@ -59,14 +59,14 @@ def find_article_online(keywords, website):
 def find_article_news(keywords):
     stringOfKeywords = listToString(keywords) # insensible à la casse, string avec les mots clés séparés par une ','
     articlesMatched = []
-    sites = google_news_search(keywords)
+    sites = google_news_search(keywords, 1)
     print(sites)
-    # for url in sites:
-    #     article = Article(url)
-    #     article.download()
-    #     article.parse()
-    #     articlesMatched.append(Article_c(url = url,
-    #                             title = article.title,
-    #                             text = article.text,
-    #                             keywords = stringOfKeywords))
+    for url in sites:
+        article = Article(url)
+        article.download()
+        article.parse()
+        articlesMatched.append(Article_c(url = url,
+                                title = article.title,
+                                text = article.text,
+                                keywords = stringOfKeywords))
     return(articlesMatched)
