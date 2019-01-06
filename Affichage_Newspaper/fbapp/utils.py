@@ -56,7 +56,7 @@ def find_article_online(keywords, website):
                                 keywords = stringOfKeywords))
     return(articlesMatched)
 
-def find_article_news(keywords, nb_article = 1):
+def find_article_news(keywords, nb_article):
     """
     fonction renvoyant une liste d'article (la classe Article_c) depuis une recherche google news
     input :
@@ -67,9 +67,9 @@ def find_article_news(keywords, nb_article = 1):
     """
     stringOfKeywords = listToString(keywords) # insensible à la casse, string avec les mots clés séparés par une ','
     articlesMatched = []
-    sites = google_news_search(keywords, nb_article)
-    print(sites)
+    sites = google_news_search(keywords, nb_article = 5)
     for url in sites:
+        print(url)
         article = Article(url)
         article.download()
         article.parse()

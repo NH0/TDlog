@@ -47,9 +47,13 @@ def google_news_search(keywords, nb_article):
     for keyword in keywords:
         query += keyword + ' '
     sites = []
-    for url in search(query, tld='com', lang='en', num=nb_article, stop=nb_article, pause=3, tpe='nws'):
-        #print(url)
-        sites.append(url)
+    count = 0
+    for url in search(query, tld='com', lang='en', num=10, start=0, stop=nb_article, pause=2.0, tpe='nws'):
+        if(count < nb_article):
+            sites.append(url)
+            count += 1
+        else:
+            break
     return(sites)
 
 # def google_news_search_v2(keywords, nb_url):
