@@ -23,14 +23,19 @@ def projet():
     articleS = find_article_by_keywords(keywords)  # cherche l'article dans la base de données
     # articleS = find_article_by_keywords_from(keywords, checked) # cherche l'article dans la base de données en ne gardant que les articles provenant de certains sites d'information
     if (articleS == 0):    # si aucun article ne correspond dans la BDD, le cherche sur google news
-        articleS = find_article_news(keywords, nb_article = 1)   # cherche nb_article = 1 article
+        articleS = find_article_news(keywords, nb_article = 30)   # cherche nb_article article
         # for article in article_c:
         #     db.session.add(article)
         # db.session.commit()
     return render_template('projet.html',
+<<<<<<< HEAD
                             articleList = articleS,
                             searchedKeywords = stringOfKeywords,
                             sources = sources)
+=======
+                            articleList = articleS[0:2], # on affiche que les 2 premiers articles
+                            searchedKeywords = stringOfKeywords)
+>>>>>>> f1981983577cb403f09fa8f640b9e0e77bfc0c26
 
 
 @app.route('/', methods=['GET', 'POST'])
