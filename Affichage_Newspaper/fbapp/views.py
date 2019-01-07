@@ -24,9 +24,9 @@ def projet():
 
     if (articleS == 0):    # si aucun article ne correspond dans la BDD, le cherche sur google news
         if len(sources)==0:
-            articleS = find_article_news(keywords, nb_article = 30)   # cherche nb_article articles
+            articleS = find_article_news(keywords, nb_article = 2)   # cherche nb_article articles
         else:
-            articleS = find_article_news_from(keywords, 30, sources) # cherche l'article dans la base de données en ne gardant que les articles provenant de certains sites d'information
+            articleS = find_article_news_from(keywords, 2, sources) # cherche l'article dans la base de données en ne gardant que les articles provenant de certains sites d'information
         # for article in article_c:
         #     db.session.add(article)
         # db.session.commit()

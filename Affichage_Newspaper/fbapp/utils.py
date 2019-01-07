@@ -28,7 +28,7 @@ def find_article_by_keywords(keywords): #prend en argument une liste de string c
     else:
         return 0
 
-News_Sites = ['theguardian','nytimes','washingtonpost']
+News_Sites = ['https://www.theguardian.com','https://www.nytimes.com','https://www.washingtonpost.com']
 
 # def find_article_by_keywords_from(keywords, checked):
 #     articles_found = find_article_by_keywords(keywords)
@@ -89,7 +89,7 @@ def find_article_news(keywords, nb_article):
                                 keywords = stringOfKeywords))
     return(articlesMatched)
 
-def find_article_news_from(keywords, nb_article_researched, sources):
+def find_article_news_from(keywords, nb_article_per_website, sources):
     """
     fonction renvoyant une liste d'article (la classe Article_c) depuis une recherche google news provenant de certaines sources
     input :
@@ -100,23 +100,30 @@ def find_article_news_from(keywords, nb_article_researched, sources):
     """
     stringOfKeywords = listToString(keywords) # insensible à la casse, string avec les mots clés séparés par une ','
     articlesMatched = []
-    sites = google_news_search(keywords, nb_article_researched)
+    sites = []
+    for source in sources:
+        url_temp = google_news_website(keywords, source, nb_article_per_website)
+        for site in url_temp:
+            sites.append(site)
+
     nb_sites = len(sites)
-    source_site = get_source_site_from_url(sites[0])
-    compteur = 0
-    while(source_site not in sources and compteur < nb_sites-1):
-        compteur += 1
-        source_site = get_source_site_from_url(sites[compteur])
-    ## A RAJOUTER: SI ON ARRIVE AU BOUT DE LA LISTE ET QUON A PAS TROUVE D'ARTICLES, IL FAUT LE PRECISER
-    url = sites[compteur]
-    article = Article(url)
-    article.download()
-    article.parse()
-    articlesMatched.append(Article_c(url = url,
-                            title = article.title,
-                            text = article.text,
-                            keywords = stringOfKeywords))
-    return(articlesMatched)
+    if nb_sites != 0:
+        ## A RAJOUTER: SI ON ARRIVE AU BOUT DE LA LISTE ET QUON A PAS TROUVE D'ARTICLES, IL FAUT LE PRECISER
+        for url in sites:
+            print(url)
+            article = Article(url)
+            article.download()
+            article.parse()
+            articlesMatched.append(Article_c(url = url,
+                                    title = article.title,
+                                    text = article.text,
+                                    keywords = stringOfKeywords))
+        return(articlesMatched)
+    else:
+        articlesMatched.append(Article_c(url = '',
+                                    title = "Pas de résultats",
+                                    text = "Désolé, nous n'avons malheureusement pas trouvé de résultats",
+                                    keywords = "Rien du tout"))
 
 def get_source_site_from_url(url):
     L = url.split('.')

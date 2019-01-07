@@ -12,7 +12,7 @@ def listToString(keywords): # Pour l'affichage lorsqu'aucun article n'est trouv√
     return keystring
 
 
-def google_search_website(keywords, website, nb_url):
+def google_news_website(keywords, website, nb_article):
     """
     fonction faisant une recherche sur google classique
     input :
@@ -29,9 +29,14 @@ def google_search_website(keywords, website, nb_url):
     if (len(website)!=0):
         query += 'site:' + website
     print(query)
-    for url in search(query, tld="com", num=nb_url, stop=nb_url, pause=2):
-        print(url)
-        sites.append(url)
+    count = 0
+    for url in search(query, tld='com', lang='en', num=10, start=0, stop=nb_article, pause=2.0, tpe='nws'):
+        if(count < nb_article):
+            print(url)
+            sites.append(url)
+            count += 1
+        else:
+            break
     return(sites)
 
 def google_news_search(keywords, nb_article):
@@ -77,4 +82,4 @@ def google_news_search(keywords, nb_article):
 
 
 if __name__ == "__main__":
-    test = google_news_search(['air', 'france', 'klm', 'clash'], 4)
+    test = google_news_website(['cesq', 'fabregas', 'monaco'], 'www.mirror.co.uk', 2)
