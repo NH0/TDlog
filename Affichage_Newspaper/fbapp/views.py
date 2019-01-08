@@ -36,6 +36,10 @@ def projet():
                             articleList = articleS[0:2], # on affiche que les 2 premiers articles
                             searchedKeywords = stringOfKeywords)
 
+# @app.route('/hidden',methods=['GET','POST'])
+# def notation():
+#     noteA=request.projet['note']
+#     print(noteA)
 
 @app.route('/', methods=['GET', 'POST'])
 @app.route('/home/')
