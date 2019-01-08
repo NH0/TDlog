@@ -1,4 +1,4 @@
-from flask import Flask, render_template, url_for, request, session, flash
+from flask import Flask, render_template, url_for, request, session, flash, redirect
 from flask_sqlalchemy import SQLAlchemy
 
 app = Flask(__name__) # Base de données pour les articles
@@ -8,6 +8,7 @@ db = SQLAlchemy(app)
 from .utils import *
 from .utils_authentification import login_successful
 from newspaper import Article
+from .models import User
 
 
 @app.route('/article', methods=['GET', 'POST'])
@@ -34,7 +35,7 @@ def projet():
         # db.session.commit()
     return render_template('projet.html',
                             articleList = articleS[0:2], # on affiche que les 2 premiers articles
-                            searchedKeywords = stringOfKeywords)
+                            searchedKeywords = stringOfKeywords,)
 
 # @app.route('/hidden',methods=['GET','POST'])
 # def notation():
@@ -48,7 +49,7 @@ def home():
 
 
 # Routes relatives à l'identification des utilisateurs
-@app.route('/login')
+@app.route('/login', methods=['GET', 'POST'])
 def login_page():
     return render_template('login.html')
 
@@ -57,7 +58,7 @@ def logout():
     session['logged_in'] = False
     return home()
 
-@app.route('/authentification', methods=['POST'])
+@app.route('/authentification', methods=['GET','POST'])
 def do_admin_login():
 
     POST_USERNAME = request.form['username']
@@ -69,4 +70,21 @@ def do_admin_login():
         session['logged_in'] = True
     else:
         flash('Wrong password')
-    return home()
+    return redirect(url_for("home"))
+
+@app.route('/login/signup', methods=['GET','POST'])
+def signup():
+    return render_template('sign-up.html')
+
+@app.route('/register-signup', methods=['GET', 'POST'])
+def register_signup():
+    username = request.form['username']
+    password = request.form['password']
+    interests = request.form['interests']
+    # A AJOUTER: VERIFIER SI L'UTILISATEUR N'EST PAS DEJA DANS LA BASE DE DONNEES
+    db.session.add(User(username = username,
+                        password = password,
+                        keywords = interests))
+    db.session.commit()
+    flash("You are now registered, welcome :)")
+    return redirect(url_for("home"))
