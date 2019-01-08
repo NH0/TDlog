@@ -50,3 +50,24 @@ def init_db():
                         ['Migration','Marine le Pen'])
     db.session.commit()
     lg.warning('Database initialized!')
+
+## Définition de la table Users qui contient les identifiants et mots de passe des users
+class User(db.Model):
+    __bind_key__ = 'users'
+    id = db.Column(db.Integer, primary_key=True)
+    username = db.Column(db.String(50), nullable=False)
+    password = db.Column(db.String(50), nullable=False)
+
+    def __init__(self, username, password):
+        self.username = username
+        self.password = password
+
+def init_db_login():
+    db.drop_all(bind='users')
+    db.create_all(bind='users')
+    db.session.add(User(username = 'Roman',
+                        password = 'roman_password'))
+    db.session.add(User(username = 'Clement',
+                        password = 'clement_gaming'))
+    db.session.commit()
+    lg.warning('Database initialized!')

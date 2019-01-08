@@ -1,12 +1,14 @@
-from flask import Flask, render_template, url_for, request
+from flask import Flask, render_template, url_for, request, session, flash
 from flask_sqlalchemy import SQLAlchemy
 
-app = Flask(__name__)
+app = Flask(__name__) # Base de données pour les articles
 app.config.from_object('config')
 db = SQLAlchemy(app)
 
 from .utils import *
+from .utils_authentification import login_successful
 from newspaper import Article
+
 
 @app.route('/article', methods=['GET', 'POST'])
 def projet():
@@ -39,3 +41,28 @@ def projet():
 @app.route('/home/')
 def home():
     return render_template('home.html')
+
+
+# Routes relatives à l'identification des utilisateurs
+@app.route('/login')
+def login_page():
+    return render_template('login.html')
+
+@app.route('/logout')
+def logout():
+    session['logged_in'] = False
+    return home()
+
+@app.route('/authentification', methods=['POST'])
+def do_admin_login():
+
+    POST_USERNAME = request.form['username']
+    POST_PASSWORD = request.form['password']
+
+    result = login_successful(POST_USERNAME, POST_PASSWORD)
+
+    if result:
+        session['logged_in'] = True
+    else:
+        flash('Wrong password')
+    return home()
