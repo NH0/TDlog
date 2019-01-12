@@ -29,7 +29,6 @@ numpy==1.15.4
 Pillow==5.3.0
 python-dateutil==2.7.5
 pytz==2018.7
-PyYAML==3.13
 requests==2.20.1
 requests-file==1.4.3
 s3transfer==0.1.13
@@ -38,8 +37,10 @@ singledispatch==3.4.0.3
 six==1.11.0
 smart-open==1.7.1
 SQLAlchemy==1.2.14
+style==1.1.0
 tinysegmenter==0.3
 tldextract==2.2.0
+update==0.0.1
 urllib3==1.24.1
 Werkzeug==0.14.1
 wordnet==0.0.1b2
