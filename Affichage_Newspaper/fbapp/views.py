@@ -8,7 +8,7 @@ db = SQLAlchemy(app)
 hashing = Hashing(app)
 
 from .utils import *
-from .utils_authentification import login_successful
+from .utils_authentification import login_successful, user_not_in_database
 from newspaper import Article
 from .models import User
 
@@ -88,10 +88,13 @@ def register_signup():
     password = request.form['password']
     interests = request.form['interests']
     password = hashing.hash_value(password, salt='GrisThibVeloCast')
-    # A AJOUTER: VERIFIER SI L'UTILISATEUR N'EST PAS DEJA DANS LA BASE DE DONNEES
-    db.session.add(User(username = username,
-                        password = password,
-                        keywords = interests))
-    db.session.commit()
-    flash("You are now registered, welcome :)")
-    return redirect(url_for("home"))
+    if(user_not_in_database(username)):
+        db.session.add(User(username = username,
+                            password = password,
+                            keywords = interests))
+        db.session.commit()
+        flash("You are now registered, welcome :)")
+        return redirect(url_for("home"))
+    else:
+        flash("This name is already taken, try something else")
+        return redirect(url_for("signup"))

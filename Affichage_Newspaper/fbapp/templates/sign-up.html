@@ -4,6 +4,17 @@
 
 <div class="container">
   <div class="starter-template">
+    {% with messages = get_flashed_messages() %}
+      {% if messages %}
+        {% for message in messages %}
+        <div class="row">
+          <div class="col-lg-push-4 col-lg-4">
+            <p><span style="color: red;font-size: 12px">{{ message }}</span></p>
+          </div>
+        </div>
+        {% endfor %}
+      {% endif %}
+    {% endwith %}
     <form class="form-horizontal col-lg-12" action="/register-signup" method="POST">
       <div class="form-group">
         <div class="row">
