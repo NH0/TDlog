@@ -1,0 +1,53 @@
+{% extends 'base.html' %}
+
+{% block content %}
+
+<div class="container">
+  <div class="starter-template">
+    {% with messages = get_flashed_messages() %}
+      {% if messages %}
+        {% for message in messages %}
+        <div class="row">
+          <div class="col-lg-push-4 col-lg-4">
+            <p><span style="color: red;font-size: 12px">{{ message }}</span></p>
+          </div>
+        </div>
+        {% endfor %}
+      {% endif %}
+    {% endwith %}
+    <form class="form-horizontal col-lg-12" action="/register-signup" method="POST">
+      <div class="form-group">
+        <div class="row">
+          <div class="col-lg-push-4 col-lg-4">
+            <div class="authentification-form">
+              <input type="username" class="form-control" name="username" placeholder="Username">
+            </div>
+          </div>
+        </div>
+        <div class="row">
+          <div class="col-lg-push-4 col-lg-4">
+            <div class="authentification-form">
+              <input type="password" class="form-control" name="password" placeholder="Password">
+            </div>
+          </div>
+        </div>
+        <div class="row">
+          <div class="col-lg-push-4 col-lg-4">
+            <div class="authentification-form">
+              <input type="textarea" class="form-control" name="interests" placeholder="Interests">
+            </div>
+          </div>
+        </div>
+        <div class="row">
+          <div class="col-lg-push-4 col-lg-4">
+            <div class="authentification-form">
+              <input type="submit" class="form-control" value="Sign up">
+            </div>
+          </div>
+        </div>
+      </div>
+    </form>
+  </div>
+</div>
+
+{% endblock %}

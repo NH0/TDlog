@@ -54,3 +54,30 @@ def init_db():
                         ['Migration','Marine le Pen'])
     db.session.commit()
     lg.warning('Database initialized!')
+
+## Définition de la table Users qui contient les identifiants et mots de passe des users
+class User(db.Model):
+    __bind_key__ = 'users'
+    id = db.Column(db.Integer, primary_key=True)
+    username = db.Column(db.String(50), nullable=False)
+    password = db.Column(db.String(50), nullable=False)
+    keywords = db.Column(db.String(400), nullable=False)
+
+    def __init__(self, username, password, keywords):
+        self.username = username
+        self.password = password
+        self.keywords = keywords
+
+
+# POUR INITIALISER LA BASE DE DONNEES CONTENANT LES MOTS DE PASSE, IL FAUT LANCER DANS LA CONSOLE FLASK_APP=run.py flask init_db_login
+def init_db_login():
+    db.drop_all(bind='users')
+    db.create_all(bind='users')
+    db.session.add(User(username = 'Roman',
+                        password = 'roman_password',
+                        keywords = 'politics, world, economics'))
+    db.session.add(User(username = 'Clement',
+                        password = 'clement_gaming',
+                        keywords = 'foot, sports, snow'))
+    db.session.commit()
+    lg.warning('Database initialized!')

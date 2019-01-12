@@ -53,6 +53,7 @@ def google_news_search(keywords, nb_article):
         query += keyword + ' '
     sites = []
     count = 0
+    #for url in search(query, tld='com', lang='en', num=10, start=0, stop=nb_article, pause=2.0, tpe='nws', params_perso='tbs=ctr:countryUK%7CcountryGB&cr=countryUK%7CcountryGB'):
     for url in search(query, tld='com', lang='en', num=10, start=0, stop=nb_article, pause=2.0, tpe='nws'):
         if(count < nb_article):
             sites.append(url)

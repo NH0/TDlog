@@ -4,6 +4,17 @@
 
 <div class="container">
   <div class="starter-template">
+    {% with messages = get_flashed_messages() %}
+      {% if messages %}
+        {% for message in messages %}
+        <div class="row">
+          <div class="col-lg-12">
+            <p><span style="font-size: 12px">{{ message }}</span></p>
+          </div>
+        </div>
+        {% endfor %}
+      {% endif %}
+    {% endwith %}
     <form class="form-horizontal col-lg-12" action="/article" method="POST">
       <div class="form-group">
         <legend style="text-align:center"><em>Enter keywords</em></legend>
@@ -34,8 +45,8 @@
         </div>
         <div class="row">
           <div class="col-lg-push-3 col-lg-9">
-            <input type="checkbox" id="wash-post" name="https://www.washingtonpost.com">
-            <label for="wash-post" class="col-lg-4 control-label" style="text-align: left">The Washington Post</label>
+            <input type="checkbox" id="economist" name="https://www.economist.com">
+            <label for="economist" class="col-lg-4 control-label" style="text-align: left">The Economist</label>
           </div>
         </div>
       </div>

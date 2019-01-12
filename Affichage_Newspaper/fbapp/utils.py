@@ -28,7 +28,7 @@ def find_article_by_keywords(keywords): #prend en argument une liste de string c
     else:
         return 0
 
-News_Sites = ['https://www.theguardian.com','https://www.nytimes.com','https://www.washingtonpost.com']
+News_Sites = ['https://www.theguardian.com','https://www.nytimes.com','https://www.economist.com']
 
 # def find_article_by_keywords_from(keywords, checked):
 #     articles_found = find_article_by_keywords(keywords)
