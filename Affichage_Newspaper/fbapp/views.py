@@ -98,3 +98,10 @@ def register_signup():
     else:
         flash("This name is already taken, try something else")
         return redirect(url_for("signup"))
+
+# Profile page
+@app.route('/profile', methods=['GET', 'POST'])
+def profile():
+    return render_template('profile.html',
+                            username = 'Rien',
+                            interests = 'Rien non plus')
