@@ -72,6 +72,7 @@ def do_admin_login():
 
     if result:
         session['logged_in'] = True
+        flash("Succesfully logged in!")
         return redirect(url_for("home"))
     else:
         flash('Wrong password')

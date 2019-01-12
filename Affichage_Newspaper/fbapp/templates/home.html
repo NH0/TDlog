@@ -4,6 +4,17 @@
 
 <div class="container">
   <div class="starter-template">
+    {% with messages = get_flashed_messages() %}
+      {% if messages %}
+        {% for message in messages %}
+        <div class="row">
+          <div class="col-lg-12">
+            <p><span style="font-size: 12px">{{ message }}</span></p>
+          </div>
+        </div>
+        {% endfor %}
+      {% endif %}
+    {% endwith %}
     <form class="form-horizontal col-lg-12" action="/article" method="POST">
       <div class="form-group">
         <legend style="text-align:center"><em>Enter keywords</em></legend>
