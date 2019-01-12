@@ -51,7 +51,7 @@
       border-color: rgb(37,48,64);
     }
     .authentification-form {
-      padding: 10px 0 
+      padding: 10px 0
     }
   </style>
 
@@ -73,8 +73,11 @@
         <h3>Newspaper article selection</h3>
       </div>
       <ul class="nav navbar-nav navbar-right">
-        <li><a href="/login">Sign in</a></li>
+        {% if session['logged_in'] %}
         <li><a href="/logout">Log out</a></li>
+        {% else %}
+        <li><a href="/login">Sign in</a></li>
+        {% endif %}
       </ul>
     </div>
   </nav>

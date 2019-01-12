@@ -1,9 +1,11 @@
 from flask import Flask, render_template, url_for, request, session, flash, redirect
 from flask_sqlalchemy import SQLAlchemy
+from flask.ext.hashing import Hashing
 
 app = Flask(__name__) # Base de données pour les articles
 app.config.from_object('config')
 db = SQLAlchemy(app)
+hashing = Hashing(app)
 
 from .utils import *
 from .utils_authentification import login_successful
@@ -64,13 +66,16 @@ def do_admin_login():
     POST_USERNAME = request.form['username']
     POST_PASSWORD = request.form['password']
 
+    POST_PASSWORD = hashing.hash_value(POST_PASSWORD,'GrisThibVeloCast')
+
     result = login_successful(POST_USERNAME, POST_PASSWORD)
 
     if result:
         session['logged_in'] = True
+        return redirect(url_for("home"))
     else:
         flash('Wrong password')
-    return redirect(url_for("home"))
+        return redirect(url_for("login_page"))
 
 @app.route('/login/signup', methods=['GET','POST'])
 def signup():
@@ -81,6 +86,7 @@ def register_signup():
     username = request.form['username']
     password = request.form['password']
     interests = request.form['interests']
+    password = hashing.hash_value(password, salt='GrisThibVeloCast')
     # A AJOUTER: VERIFIER SI L'UTILISATEUR N'EST PAS DEJA DANS LA BASE DE DONNEES
     db.session.add(User(username = username,
                         password = password,
