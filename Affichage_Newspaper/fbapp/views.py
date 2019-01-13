@@ -11,7 +11,7 @@ hashing = Hashing(app)
 from .utils import *
 from .utils_authentification import login_successful, user_not_in_database, find_interests_in_db
 from newspaper import Article
-from .models import User, Article_c
+from .models import User, Article_c, Votes
 
 
 @app.route('/article', methods=['GET', 'POST'])
@@ -43,9 +43,7 @@ def projet():
         # for article in article_c:
         #     db.session.add(article)
         # db.session.commit()
-    pprint(articleS)
-    articleS = sorted(articleS, key=lambda x: x.note, reverse=True)
-    pprint(articleS)
+    articleS = sorted(articleS, key=lambda x: x.note, reverse=True) #Triés par préférences des utilisateurs
     return render_template('projet.html',
                             articleList = articleS[0:2], # on affiche que les 2 premiers articles
                             searchedKeywords = stringOfKeywords,)
@@ -77,6 +75,7 @@ def do_admin_login():
     result = login_successful(POST_USERNAME, POST_PASSWORD)
 
     if result:
+        session['uid'] = User.query.filter_by(username=POST_USERNAME).first().id
         session['username'] = POST_USERNAME
         session['logged_in'] = True
         flash("Succesfully logged in!")
@@ -116,15 +115,26 @@ def profile():
 @app.route('/rateArticle/<id>', methods=['GET','POST'])
 def notation(id):
     if (session['logged_in']):
-        id = int(id)
-        noteA = int(request.form['note'])
-        articleNoted = Article_c.query.filter_by(idarticle = id).first()
-        articleNoted.note = round((articleNoted.note * articleNoted.nbVotes + noteA) / (articleNoted.nbVotes + 1),1)
-        articleNoted.nbVotes = articleNoted.nbVotes + 1
-        db.session.merge(articleNoted)
-        db.session.commit()
-        # pprint("Article noted")
-        flash("You rated \""+articleNoted.title+"\" "+str(noteA)+"/5.")
+        if not( Votes.query.filter_by(userid = session['uid'],articleid = id).count() ):
+
+            id = int(id)
+            noteA = int(request.form['note'])
+            articleNoted = Article_c.query.filter_by(idarticle = id).first()
+            articleNoted.note = round((articleNoted.note * articleNoted.nbVotes + noteA) / (articleNoted.nbVotes + 1),1)
+            articleNoted.nbVotes = articleNoted.nbVotes + 1
+            db.session.merge(articleNoted)
+            db.session.commit()
+
+            db.session.add(Votes(userid=session['uid'],
+                                      articleid=id,
+                                      note = noteA))
+            db.session.commit()
+
+            flash("You rated \""+articleNoted.title+"\" "+str(noteA)+"/5.")
+
+        else:
+            flash("You already rated the article !")
+
     else:
         flash("You must be logged in to vote !")
 
@@ -134,4 +144,5 @@ def notation(id):
     # return render_template('projet.html',
     #                         articleList = articleS[0:2], # on affiche que les 2 premiers articles
     #                         searchedKeywords = stringOfKeywords,)
+    pprint(Votes.query.all())
     return redirect(url_for("home"))

@@ -13,3 +13,7 @@ def init_db():
 @app.cli.command('init_db_login')
 def init_db_login():
     models.init_db_login()
+
+@app.cli.command('init_db_votes')
+def init_db_votes():
+    models.init_db_votes()
