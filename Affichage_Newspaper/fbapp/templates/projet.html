@@ -33,18 +33,23 @@
   </div>
   <hr color="blue">
 </div>
-<form action="../models.py" id="noteForm">
-  <input type="submit">
-</form>
-  This article is :
-  <select name="note" form="noteForm">
-    <option value="0">0</option>
-    <option value="1">1</option>
-    <option value="2">2</option>
-    <option value="3">3</option>
-    <option value="4">4</option>
-    <option value="5">5</option>
-  </select>
+{% if article.nbVotes > 0 %}
+<p> This article is rated {{ article.note }}/5 by users. </p>
+{% else %}
+<p> This article is not yet rated by users. </p>
+{% endif %}
+  <form action="/rateArticle/{{ article.idarticle }}" method="POST">
+    Let us know your preferences ! Rate this article
+    <select required name="note">
+      <option value="0">0</option>
+      <option value="1">1</option>
+      <option value="2">2</option>
+      <option selected value="3">3</option>
+      <option value="4">4</option>
+      <option value="5">5</option>
+    </select> stars.
+    <input type="submit" value="Rate !">
+  </form>
 
 {% endfor %}
 
