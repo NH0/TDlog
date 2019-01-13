@@ -8,7 +8,7 @@ db = SQLAlchemy(app)
 hashing = Hashing(app)
 
 from .utils import *
-from .utils_authentification import login_successful, user_not_in_database
+from .utils_authentification import login_successful, user_not_in_database, find_interests_in_db
 from newspaper import Article
 from .models import User
 
@@ -71,6 +71,7 @@ def do_admin_login():
     result = login_successful(POST_USERNAME, POST_PASSWORD)
 
     if result:
+        session['username'] = POST_USERNAME
         session['logged_in'] = True
         flash("Succesfully logged in!")
         return redirect(url_for("home"))
@@ -91,7 +92,7 @@ def register_signup():
     if(user_not_in_database(username)):
         db.session.add(User(username = username,
                             password = password,
-                            keywords = interests))
+                            interests = interests))
         db.session.commit()
         flash("You are now registered, welcome :)")
         return redirect(url_for("home"))
@@ -103,5 +104,5 @@ def register_signup():
 @app.route('/profile', methods=['GET', 'POST'])
 def profile():
     return render_template('profile.html',
-                            username = 'Rien',
-                            interests = 'Rien non plus')
+                            username = session['username'],
+                            interests = find_interests_in_db(session['username']))

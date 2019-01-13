@@ -9,3 +9,7 @@ def user_not_in_database(username):
     query = User.query.filter(User.username.in_([username]))
     result = query.first()
     return not result
+
+def find_interests_in_db(username):
+    query = User.query.filter_by(username=username).first()
+    return query.interests
