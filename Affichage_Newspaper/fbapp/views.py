@@ -103,5 +103,5 @@ def register_signup():
 @app.route('/profile', methods=['GET', 'POST'])
 def profile():
     return render_template('profile.html',
-                            username = 'Rien',
+                            username = POST_USERNAME,
                             interests = 'Rien non plus')
