@@ -1,6 +1,6 @@
 from flask import Flask, render_template, url_for, request, session, flash, redirect
 from flask_sqlalchemy import SQLAlchemy
-from flask.ext.hashing import Hashing
+from flask_hashing import Hashing
 
 app = Flask(__name__) # Base de données pour les articles
 app.config.from_object('config')
