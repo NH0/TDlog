@@ -51,13 +51,8 @@ def projet():
 @app.route('/', methods=['GET', 'POST'])
 @app.route('/home/')
 def home():
-<<<<<<< HEAD
-    # if not(hasattr(session,'logged_in')):
-    #     session['logged_in'] = False
-=======
     if not('logged_in' in session):
         session['logged_in'] = False
->>>>>>> fc300b97176b1743c84f9328b0ee65f6d52d3986
     return render_template('home.html')
 
 
