@@ -64,7 +64,11 @@ def home():
 # Routes relatives à l'identification des utilisateurs
 @app.route('/login', methods=['GET', 'POST'])
 def login_page():
-    return render_template('login.html')
+    if not(('logged_in' in session) and session['logged_in']):
+        return render_template('login.html')
+    else:
+        flash("Already logged in !")
+        return redirect(url_for("home"))
 
 @app.route('/logout')
 def logout():
@@ -93,7 +97,11 @@ def do_admin_login():
 
 @app.route('/login/signup', methods=['GET','POST'])
 def signup():
-    return render_template('sign-up.html')
+    if not(('logged_in' in session) and session['logged_in']):
+        return render_template('sign-up.html')
+    else:
+        flash("Already logged in !")
+        return redirect(url_for("home"))
 
 @app.route('/register-signup', methods=['GET', 'POST'])
 def register_signup():
