@@ -17,3 +17,7 @@ pip3 install wordcloud
 pip3 install matplotlib
 
 pip install retinasdk
+
+pip install stop-words
+
+pip install google
