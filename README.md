@@ -15,3 +15,5 @@ pip3 install flask_sqlalchemy
 pip3 install wordcloud
 
 pip3 install matplotlib
+
+pip install retinasdk
