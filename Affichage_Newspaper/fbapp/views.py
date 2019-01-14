@@ -51,8 +51,8 @@ def projet():
 @app.route('/', methods=['GET', 'POST'])
 @app.route('/home/')
 def home():
-    if not(hasattr(session,'logged_in')):
-        session['logged_in'] = False
+    # if not(hasattr(session,'logged_in')):
+    #     session['logged_in'] = False
     return render_template('home.html')
 
 
@@ -110,13 +110,13 @@ def register_signup():
 # Profile page
 @app.route('/profile', methods=['GET', 'POST'])
 def profile():
-    if (hasattr(session,'logged_in') and session['logged_in']):
-        return render_template('profile.html',
-                                username = session['username'],
-                                interests = find_interests_in_db(session['username']))
-    else:
-        flash("You must be logged in to view your profile !")
-        return redirect(url_for("login_page"))
+    # if (hasattr(session,'logged_in') and session['logged_in']):
+    return render_template('profile.html',
+                            username = session['username'],
+                            interests = find_interests_in_db(session['username']))
+    # else:
+    #     flash("You must be logged in to view your profile !")
+    #     return redirect(url_for("login_page"))
 
 @app.route('/rateArticle/<id>', methods=['GET','POST'])
 def notation(id):
