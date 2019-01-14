@@ -3,6 +3,12 @@ import requests
 import re
 from bs4 import BeautifulSoup
 import urllib
+from wordcloud import WordCloud, STOPWORDS, ImageColorGenerator
+import matplotlib.pyplot as plt
+import csv
+import os
+from stop_words import get_stop_words
+
 
 def listToString(keywords): # Pour l'affichage lorsqu'aucun article n'est trouvé
     keystring = ""
@@ -81,6 +87,29 @@ def google_news_search(keywords, nb_article):
 #     #     print(news.link)
 #     return(['https://www.theguardian.com/business/2017/jul/20/french-dutch-culture-clash-revealed-leaked-air-france-klm-report'])
 
+def wordcloud(text, nb_words, banned_words = []):
+    stopwords = set(STOPWORDS)
+    stopwords.update(banned_words)
+    color = 'rgba(255, 255, 255, 0)'
+    mode = 'RGBA'
+    return(WordCloud(stopwords=stopwords, max_font_size=50, max_words=nb_words, background_color=color, mode=mode).generate(text))
 
-if __name__ == "__main__":
-    test = google_news_website(['cesq', 'fabregas', 'monaco'], 'www.mirror.co.uk', 2)
+def display_wordcloud(wordcloud):
+    plt.imshow(wordcloud, interpolation='bilinear')
+    plt.axis('off')
+    plt.show()
+
+def save_wordcloud(wordcloud, file_name):
+    parent_directory = os.path.abspath('..')
+    path = parent_directory + '/pictures/' + file_name + '.png'
+    print('path = {}'.format(path))
+    wordcloud.to_file(path)
+
+if __name__ == '__main__':
+    camus = open('camus.txt', 'r')
+    text = camus.read()
+    stop_french = get_stop_words('french')
+    test = wordcloud(text, 50, stop_french)
+    #display_wordcloud(test)
+    save_wordcloud(test, 'transparent')
+    #test = google_news_website(['cesq', 'fabregas', 'monaco'], 'www.mirror.co.uk', 2)
