@@ -42,6 +42,8 @@ def projet():
         else:
             articles_list = find_article_news_from(keywords, 2, sources) # cherche l'article dans la base de données en ne gardant que les articles provenant de certains sites d'information
             for article in articles_list:
+                #article.keyword=listToString(liteClient.getKeywords(article.text.encode('utf-8')))))
+                #Cette etape prend du temps, il faut trouver un autre endroit pour le faire 
                 db.session.add(article)
                 db.session.commit()
     articles_list = sorted(articles_list, key=lambda x: x.note, reverse=True) #Triés par préférences des utilisateurs
