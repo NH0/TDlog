@@ -5,6 +5,7 @@ from .views import app
 from .basicFunctions import *
 import config as cf
 from newspaper import Article
+import retinasdk
 
 # Create database connection object
 db = SQLAlchemy(app)
