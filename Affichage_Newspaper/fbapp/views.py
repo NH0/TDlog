@@ -126,13 +126,14 @@ def profile():
         flash("You must be logged in to view your profile !")
         return redirect(url_for("login_page"))
 
-@app.route('/rateArticle/<id>', methods=['GET','POST'])
-def notation(id):
+@app.route('/rateArticle', methods=['GET','POST'])
+def notation():
     if ('logged_in' in session) and session['logged_in']:
-        if not( Votes.query.filter_by(userid = session['uid'],articleid = id).count() ):
 
-            id = int(id)
-            noteA = int(request.form['note'])
+        id = int(request.form['idA'])
+        noteA = int(request.form['note'])
+
+        if not( Votes.query.filter_by(userid = session['uid'],articleid = id).count() ):
             articleNoted = Article_c.query.filter_by(idarticle = id).first()
             articleNoted.note = round((articleNoted.note * articleNoted.nbVotes + noteA) / (articleNoted.nbVotes + 1),1)
             articleNoted.nbVotes = articleNoted.nbVotes + 1
@@ -143,7 +144,6 @@ def notation(id):
                                       articleid=id,
                                       note = noteA))
             db.session.commit()
-
             flash("You rated \""+articleNoted.title+"\" "+str(noteA)+"/5.")
 
         else:
