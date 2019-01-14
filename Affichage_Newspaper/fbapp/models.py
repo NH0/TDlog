@@ -8,6 +8,7 @@ from newspaper import Article
 
 # Create database connection object
 db = SQLAlchemy(app)
+global api_key="eabe2bc0-1286-11e9-bb65-69ed2d3c7927"
 
 class Article_c(db.Model):
     idarticle = db.Column(db.Integer, primary_key=True)
@@ -25,7 +26,12 @@ class Article_c(db.Model):
         self.keywords = keywords
         # self.authors = authors
 
+def keywords(api_key,Text):
+	liteClient = retinasdk.LiteClient(api_key)
+	return(liteClient.getKeywords(data("Text.txt")))
+
 def add_article_to_db(url, keywords): # Automatisation du processus pour ajouter une entrée à la base de données, pour l'instant il faut renseigner soi meme les keywords
+    liteClient = retinasdk.LiteClient(api_key)
     article = Article(url)
     article.download()
     article.parse()
@@ -33,7 +39,7 @@ def add_article_to_db(url, keywords): # Automatisation du processus pour ajouter
     db.session.add(Article_c(url = url,
                             title = article.title,
                             text = article.text,
-                            keywords = stringOfKeywords))
+                            keywords = liteClient.getKeywords(article.text)))
 
 """
 keywords doit être une liste de keywords : ['keyword1','keyword2','keyword3']

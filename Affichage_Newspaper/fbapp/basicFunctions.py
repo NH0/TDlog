@@ -75,6 +75,27 @@ def google_news_search(keywords, nb_article):
 #     #     print(news.link)
 #     return(['https://www.theguardian.com/business/2017/jul/20/french-dutch-culture-clash-revealed-leaked-air-france-klm-report'])
 
+def data(chemin):
+    """
+Fonction qui prend un chemin et transforme en un string du texte
+    """
+    f= open(chemin)
+    text=""
+    nb_lignes=0
+    for i in f:
+        if i!='':
+            nb_lignes+=1
+    f.close()
+
+    f= open(chemin)
+    for i in range(nb_lignes):
+        ligne=f.readline()
+        ligne=ligne.replace("\n"," ")
+        ligne=ligne.replace("\n\r"," ")
+        text+=ligne
+    f.close()
+    return(text)
+
 
 if __name__ == "__main__":
     test = google_news_search(['air', 'france', 'klm', 'clash'], 4)
