@@ -1,15 +1,5 @@
 {% extends 'base.html' %}
 
-{% block scripts %}
-    {{ super() }}
-
-    <script>
-        $(document).ready(rating(idarticle) {
-             alert('clicked');
-         });
-    </script>
-{% endblock %}
-
 {% block content %}
 
 {% for article in articleList %}
@@ -48,9 +38,9 @@
 {% else %}
 <p> This article is not yet rated by users. </p>
 {% endif %}
-  <form>
+  <form id="form-rate">
     Let us know your preferences ! Rate this article
-    <select required name="note">
+    <select required id="note">
       <option value="0">0</option>
       <option value="1">1</option>
       <option value="2">2</option>
@@ -58,10 +48,10 @@
       <option value="4">4</option>
       <option value="5">5</option>
     </select> stars.
-    <input type="button" value="Rate !" onclick="rating({{ article.idarticle }})"> <!--ajouter attribue onclick="nomFctJS(article.id)" nomFctJS devra utiliser une autre fct pour recup valeur de select en jquery
+    <input type="button" value="Rate !"> <!--ajouter attribue onclick="nomFctJS(article.id)" nomFctJS devra utiliser une autre fct pour recup valeur de select en jquery
     ("note").val() faire JSON AJAX ou bien document.getElementById("note") get.JSON{nomderoute, {...}}-->
   </form>
 
 {% endfor %}
-
+<script src="{{ url_for('static', filename='js/ratings.js') }}"></script>
 {% endblock %}
