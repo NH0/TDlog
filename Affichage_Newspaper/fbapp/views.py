@@ -118,15 +118,6 @@ def register_signup():
 # Profile page
 @app.route('/profile', methods=['GET', 'POST'])
 def profile():
-<<<<<<< HEAD
-    # if (hasattr(session,'logged_in') and session['logged_in']):
-    return render_template('profile.html',
-                            username = session['username'],
-                            interests = find_interests_in_db(session['username']))
-    # else:
-    #     flash("You must be logged in to view your profile !")
-    #     return redirect(url_for("login_page"))
-=======
     if ('logged_in' in session) and session['logged_in']:
         return render_template('profile.html',
                                 username = session['username'],
@@ -134,7 +125,6 @@ def profile():
     else:
         flash("You must be logged in to view your profile !")
         return redirect(url_for("login_page"))
->>>>>>> fc300b97176b1743c84f9328b0ee65f6d52d3986
 
 @app.route('/rateArticle/<id>', methods=['GET','POST'])
 def notation(id):
