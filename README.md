@@ -4,10 +4,14 @@ School project
 
 You will need to execute:
 
-pip install flask
+pip3 install flask
 
-pip install flask-hashing
+pip3 install flask-hashing
 
 pip3 install newspaper3k
 
-pip install flask_sqlalchemy
+pip3 install flask_sqlalchemy
+
+pip3 install wordcloud
+
+pip3 install matplotlib
