@@ -8,8 +8,6 @@ app.config.from_object('config')
 db = SQLAlchemy(app)
 hashing = Hashing(app)
 
-session['logged_in'] = False
-
 from .utils import *
 from .utils_authentification import login_successful, user_not_in_database, find_interests_in_db
 from newspaper import Article
@@ -53,6 +51,8 @@ def projet():
 @app.route('/', methods=['GET', 'POST'])
 @app.route('/home/')
 def home():
+    if not(hasattr(session,'logged_in')):
+        session['logged_in'] = False
     return render_template('home.html')
 
 
@@ -116,7 +116,7 @@ def profile():
 
 @app.route('/rateArticle/<id>', methods=['GET','POST'])
 def notation(id):
-    if (session['logged_in']):
+    if hasattr(session,'logged_in') and session['logged_in']:
         if not( Votes.query.filter_by(userid = session['uid'],articleid = id).count() ):
 
             id = int(id)
@@ -138,6 +138,7 @@ def notation(id):
             flash("You already rated the article !")
 
     else:
+        session['logged_in'] = False
         flash("You must be logged in to vote !")
 
     # pprint(articleS)
