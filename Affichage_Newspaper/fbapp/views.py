@@ -33,7 +33,8 @@ def projet():
     for key in keywords:
         key = key.lower() # insensible à la casse
     stringOfKeywords = listToString(keywords)
-    articles_list = find_article_by_keywords(keywords)  # cherche l'article dans la base de données
+
+    articles_list = find_article_by_keywords(keywords, sources)  # cherche l'article dans la base de données
 
     if (articles_list == 0):    # si aucun article ne correspond dans la BDD, le chercher sur google news
         if len(sources)==0:

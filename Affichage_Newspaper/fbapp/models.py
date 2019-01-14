@@ -17,6 +17,7 @@ class Article_c(db.Model):
     title = db.Column(db.String(200), nullable=False)
     text = db.Column(db.String(), nullable=False)
     keywords = db.Column(db.String(), nullable=False)
+    source = db.Column(db.String(), nullable=False)
     note = db.Column(db.Float(), nullable=False)
     nbVotes = db.Column(db.Integer(), nullable=False) #On a besoin du nombre de votes pour calculer la moyenne
     # authors = db.Column(db.String(), nullable=False) A IMPLEMENTER PLUS TARD: ATTENTION, C'EST UNE LISTE D'AUTEURS QUE L'ON RECOIT GRACE A LA LIBRAIRIE PYTHON
