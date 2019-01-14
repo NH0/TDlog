@@ -1,5 +1,5 @@
 import random as rd
-from nltk.corpus import wordnet
+# from nltk.corpus import wordnet
 from itertools import chain
 
 from fbapp.models import Article_c
@@ -37,19 +37,19 @@ News_Sites = ['https://www.theguardian.com','https://www.nytimes.com','https://w
 #
 
 
-def findSynonyms(word):
-    SetOfSynonyms = wordnet.synsets(word)
-    synonyms = set([]) # Unique elements
-    for syn in SetOfSynonyms:
-        for name in syn.lemma_names():
-            synonyms.add(name)
-        for hyperList in syn.hypernyms():
-            for hyper in hyperList.lemma_names():
-                synonyms.add(hyper)
-        for hypoList in syn.hyponyms():
-            for hypo in hypoList.lemma_names():
-                synonyms.add(hypo)
-    return (synonyms)
+# def findSynonyms(word):
+#     SetOfSynonyms = wordnet.synsets(word)
+#     synonyms = set([]) # Unique elements
+#     for syn in SetOfSynonyms:
+#         for name in syn.lemma_names():
+#             synonyms.add(name)
+#         for hyperList in syn.hypernyms():
+#             for hyper in hyperList.lemma_names():
+#                 synonyms.add(hyper)
+#         for hypoList in syn.hyponyms():
+#             for hypo in hypoList.lemma_names():
+#                 synonyms.add(hypo)
+#     return (synonyms)
 
 def find_article_online(keywords, website):
     stringOfKeywords = listToString(keywords) # insensible à la casse, string avec les mots clés séparés par une ','

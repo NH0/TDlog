@@ -51,7 +51,7 @@ def projet():
 @app.route('/', methods=['GET', 'POST'])
 @app.route('/home/')
 def home():
-    if not(hasattr(session,'logged_in')):
+    if not('logged_in' in session):
         session['logged_in'] = False
     return render_template('home.html')
 
@@ -59,7 +59,11 @@ def home():
 # Routes relatives à l'identification des utilisateurs
 @app.route('/login', methods=['GET', 'POST'])
 def login_page():
-    return render_template('login.html')
+    if not(('logged_in' in session) and session['logged_in']):
+        return render_template('login.html')
+    else:
+        flash("Already logged in !")
+        return redirect(url_for("home"))
 
 @app.route('/logout')
 def logout():
@@ -88,7 +92,11 @@ def do_admin_login():
 
 @app.route('/login/signup', methods=['GET','POST'])
 def signup():
-    return render_template('sign-up.html')
+    if not(('logged_in' in session) and session['logged_in']):
+        return render_template('sign-up.html')
+    else:
+        flash("Already logged in !")
+        return redirect(url_for("home"))
 
 @app.route('/register-signup', methods=['GET', 'POST'])
 def register_signup():
@@ -102,7 +110,7 @@ def register_signup():
                             interests = interests))
         db.session.commit()
         flash("You are now registered, welcome :)") #Registered but not logged in ! maybe redirect to login.html ?
-        return redirect(url_for("home"))
+        return redirect(url_for("login_page"))
     else:
         flash("This name is already taken, try something else")
         return redirect(url_for("signup"))
@@ -110,13 +118,17 @@ def register_signup():
 # Profile page
 @app.route('/profile', methods=['GET', 'POST'])
 def profile():
-    return render_template('profile.html',
-                            username = session['username'],
-                            interests = find_interests_in_db(session['username']))
+    if ('logged_in' in session) and session['logged_in']:
+        return render_template('profile.html',
+                                username = session['username'],
+                                interests = find_interests_in_db(session['username']))
+    else:
+        flash("You must be logged in to view your profile !")
+        return redirect(url_for("login_page"))
 
 @app.route('/rateArticle/<id>', methods=['GET','POST'])
 def notation(id):
-    if hasattr(session,'logged_in') and session['logged_in']:
+    if ('logged_in' in session) and session['logged_in']:
         if not( Votes.query.filter_by(userid = session['uid'],articleid = id).count() ):
 
             id = int(id)
