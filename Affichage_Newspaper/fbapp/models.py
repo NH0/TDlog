@@ -46,7 +46,7 @@ def add_article_to_db(url, keywords): # Automatisation du processus pour ajouter
     db.session.add(Article_c(url = url,
                             title = article.title,
                             text = article.text,
-                            keywords = liteClient.getKeywords(article.text)))
+                            keywords = listToString(liteClient.getKeywords(article.text.encode('utf-8'))) ))
 
 """
 keywords doit être une liste de keywords : ['keyword1','keyword2','keyword3']
