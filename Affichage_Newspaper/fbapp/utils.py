@@ -5,7 +5,8 @@ from itertools import chain
 from fbapp.models import Article_c
 from .basicFunctions import *
 from newspaper import Article
-
+from wordcloud import WordCloud, STOPWORDS, ImageColorGenerator
+import matplotlib.pyplot as plt
 
 
 def find_article(idarticle):
@@ -129,3 +130,20 @@ def get_source_site_from_url(url):
     L = url.split('.')
     source_site = L[0].split('/')[2]
     print(source_site)
+
+def wordcloud(text, nb_words, banned_words):
+    stopwords = set(STOPWORDS)
+    stopwords.update(banned_words)
+    return(WordCloud(stopwords=stopwords, max_font_size=50, max_words=nb_words, background_color='white').generate(text))
+
+def display_wordcloud(wordcloud):
+    plt.imshow(wordcloud, interpolation='bilinear')
+    plt.axis('off')
+    plt.show()
+
+def save_wordcloud(wordcloud, file_name):
+    print(os.getcwd())
+    directory = 'Affichage_Newspaper'
+    os.chdir(directory)
+    path = 'pictures/' + filename + '.png'
+    wordcloud.to_file(path)
