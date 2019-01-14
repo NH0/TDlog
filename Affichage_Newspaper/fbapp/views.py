@@ -8,6 +8,8 @@ app.config.from_object('config')
 db = SQLAlchemy(app)
 hashing = Hashing(app)
 
+session['logged_in'] = False
+
 from .utils import *
 from .utils_authentification import login_successful, user_not_in_database, find_interests_in_db
 from newspaper import Article
@@ -144,5 +146,4 @@ def notation(id):
     # return render_template('projet.html',
     #                         articleList = articleS[0:2], # on affiche que les 2 premiers articles
     #                         searchedKeywords = stringOfKeywords,)
-    pprint(Votes.query.all())
     return redirect(url_for("home"))
