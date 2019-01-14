@@ -51,7 +51,7 @@ def projet():
 @app.route('/', methods=['GET', 'POST'])
 @app.route('/home/')
 def home():
-    if not(hasattr(session,'logged_in')):
+    if not('logged_in' in session):
         session['logged_in'] = False
     return render_template('home.html')
 
@@ -110,7 +110,7 @@ def register_signup():
 # Profile page
 @app.route('/profile', methods=['GET', 'POST'])
 def profile():
-    if (hasattr(session,'logged_in') and session['logged_in']):
+    if ('logged_in' in session) and session['logged_in']:
         return render_template('profile.html',
                                 username = session['username'],
                                 interests = find_interests_in_db(session['username']))
@@ -120,7 +120,7 @@ def profile():
 
 @app.route('/rateArticle/<id>', methods=['GET','POST'])
 def notation(id):
-    if hasattr(session,'logged_in') and session['logged_in']:
+    if ('logged_in' in session) and session['logged_in']:
         if not( Votes.query.filter_by(userid = session['uid'],articleid = id).count() ):
 
             id = int(id)
