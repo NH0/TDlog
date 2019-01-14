@@ -8,7 +8,7 @@ from newspaper import Article
 
 # Create database connection object
 db = SQLAlchemy(app)
-global api_key="eabe2bc0-1286-11e9-bb65-69ed2d3c7927"
+api_key="eabe2bc0-1286-11e9-bb65-69ed2d3c7927"
 
 class Article_c(db.Model):
     idarticle = db.Column(db.Integer, primary_key=True)
