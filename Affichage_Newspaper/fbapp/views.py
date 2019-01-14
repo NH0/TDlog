@@ -51,8 +51,13 @@ def projet():
 @app.route('/', methods=['GET', 'POST'])
 @app.route('/home/')
 def home():
+<<<<<<< HEAD
     # if not(hasattr(session,'logged_in')):
     #     session['logged_in'] = False
+=======
+    if not('logged_in' in session):
+        session['logged_in'] = False
+>>>>>>> fc300b97176b1743c84f9328b0ee65f6d52d3986
     return render_template('home.html')
 
 
@@ -110,6 +115,7 @@ def register_signup():
 # Profile page
 @app.route('/profile', methods=['GET', 'POST'])
 def profile():
+<<<<<<< HEAD
     # if (hasattr(session,'logged_in') and session['logged_in']):
     return render_template('profile.html',
                             username = session['username'],
@@ -117,10 +123,19 @@ def profile():
     # else:
     #     flash("You must be logged in to view your profile !")
     #     return redirect(url_for("login_page"))
+=======
+    if ('logged_in' in session) and session['logged_in']:
+        return render_template('profile.html',
+                                username = session['username'],
+                                interests = find_interests_in_db(session['username']))
+    else:
+        flash("You must be logged in to view your profile !")
+        return redirect(url_for("login_page"))
+>>>>>>> fc300b97176b1743c84f9328b0ee65f6d52d3986
 
 @app.route('/rateArticle/<id>', methods=['GET','POST'])
 def notation(id):
-    if hasattr(session,'logged_in') and session['logged_in']:
+    if ('logged_in' in session) and session['logged_in']:
         if not( Votes.query.filter_by(userid = session['uid'],articleid = id).count() ):
 
             id = int(id)
