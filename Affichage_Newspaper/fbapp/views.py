@@ -102,7 +102,7 @@ def register_signup():
                             interests = interests))
         db.session.commit()
         flash("You are now registered, welcome :)") #Registered but not logged in ! maybe redirect to login.html ?
-        return redirect(url_for("home"))
+        return redirect(url_for("login_page"))
     else:
         flash("This name is already taken, try something else")
         return redirect(url_for("signup"))
@@ -110,9 +110,13 @@ def register_signup():
 # Profile page
 @app.route('/profile', methods=['GET', 'POST'])
 def profile():
-    return render_template('profile.html',
-                            username = session['username'],
-                            interests = find_interests_in_db(session['username']))
+    if (hasattr(session,'logged_in') and session['logged_in']):
+        return render_template('profile.html',
+                                username = session['username'],
+                                interests = find_interests_in_db(session['username']))
+    else:
+        flash("You must be logged in to view your profile !")
+        return redirect(url_for("login_page"))
 
 @app.route('/rateArticle/<id>', methods=['GET','POST'])
 def notation(id):
