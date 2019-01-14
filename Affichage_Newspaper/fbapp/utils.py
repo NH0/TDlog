@@ -1,11 +1,12 @@
 import random as rd
-from nltk.corpus import wordnet
+# from nltk.corpus import wordnet
 from itertools import chain
 
 from fbapp.models import Article_c
 from .basicFunctions import *
 from newspaper import Article
-
+from wordcloud import WordCloud, STOPWORDS, ImageColorGenerator
+import matplotlib.pyplot as plt
 
 
 def find_article(idarticle):
@@ -28,7 +29,7 @@ def find_article_by_keywords(keywords): #prend en argument une liste de string c
     else:
         return 0
 
-News_Sites = ['theguardian','nytimes','washingtonpost']
+News_Sites = ['https://www.theguardian.com','https://www.nytimes.com','https://www.economist.com']
 
 # def find_article_by_keywords_from(keywords, checked):
 #     articles_found = find_article_by_keywords(keywords)
@@ -38,19 +39,19 @@ News_Sites = ['theguardian','nytimes','washingtonpost']
 #
 
 
-def findSynonyms(word):
-    SetOfSynonyms = wordnet.synsets(word)
-    synonyms = set([]) # Unique elements
-    for syn in SetOfSynonyms:
-        for name in syn.lemma_names():
-            synonyms.add(name)
-        for hyperList in syn.hypernyms():
-            for hyper in hyperList.lemma_names():
-                synonyms.add(hyper)
-        for hypoList in syn.hyponyms():
-            for hypo in hypoList.lemma_names():
-                synonyms.add(hypo)
-    return (synonyms)
+# def findSynonyms(word):
+#     SetOfSynonyms = wordnet.synsets(word)
+#     synonyms = set([]) # Unique elements
+#     for syn in SetOfSynonyms:
+#         for name in syn.lemma_names():
+#             synonyms.add(name)
+#         for hyperList in syn.hypernyms():
+#             for hyper in hyperList.lemma_names():
+#                 synonyms.add(hyper)
+#         for hypoList in syn.hyponyms():
+#             for hypo in hypoList.lemma_names():
+#                 synonyms.add(hypo)
+#     return (synonyms)
 
 def find_article_online(keywords, website):
     stringOfKeywords = listToString(keywords) # insensible à la casse, string avec les mots clés séparés par une ','
@@ -89,7 +90,7 @@ def find_article_news(keywords, nb_article):
                                 keywords = stringOfKeywords))
     return(articlesMatched)
 
-def find_article_news_from(keywords, nb_article_researched, sources):
+def find_article_news_from(keywords, nb_article_per_website, sources):
     """
     fonction renvoyant une liste d'article (la classe Article_c) depuis une recherche google news provenant de certaines sources
     input :
@@ -100,25 +101,49 @@ def find_article_news_from(keywords, nb_article_researched, sources):
     """
     stringOfKeywords = listToString(keywords) # insensible à la casse, string avec les mots clés séparés par une ','
     articlesMatched = []
-    sites = google_news_search(keywords, nb_article_researched)
+    sites = []
+    for source in sources:
+        url_temp = google_news_website(keywords, source, nb_article_per_website)
+        for site in url_temp:
+            sites.append(site)
+
     nb_sites = len(sites)
-    source_site = get_source_site_from_url(sites[0])
-    compteur = 0
-    while(source_site not in sources and compteur < nb_sites-1):
-        compteur += 1
-        source_site = get_source_site_from_url(sites[compteur])
-    ## A RAJOUTER: SI ON ARRIVE AU BOUT DE LA LISTE ET QUON A PAS TROUVE D'ARTICLES, IL FAUT LE PRECISER
-    url = sites[compteur]
-    article = Article(url)
-    article.download()
-    article.parse()
-    articlesMatched.append(Article_c(url = url,
-                            title = article.title,
-                            text = article.text,
-                            keywords = stringOfKeywords))
-    return(articlesMatched)
+    if nb_sites != 0:
+        ## A RAJOUTER: SI ON ARRIVE AU BOUT DE LA LISTE ET QUON A PAS TROUVE D'ARTICLES, IL FAUT LE PRECISER
+        for url in sites:
+            print(url)
+            article = Article(url)
+            article.download()
+            article.parse()
+            articlesMatched.append(Article_c(url = url,
+                                    title = article.title,
+                                    text = article.text,
+                                    keywords = stringOfKeywords))
+        return(articlesMatched)
+    else:
+        articlesMatched.append(Article_c(url = '',
+                                    title = "Pas de résultats",
+                                    text = "Désolé, nous n'avons malheureusement pas trouvé de résultats",
+                                    keywords = "Rien du tout"))
 
 def get_source_site_from_url(url):
     L = url.split('.')
     source_site = L[0].split('/')[2]
     print(source_site)
+
+def wordcloud(text, nb_words, banned_words):
+    stopwords = set(STOPWORDS)
+    stopwords.update(banned_words)
+    return(WordCloud(stopwords=stopwords, max_font_size=50, max_words=nb_words, background_color='white').generate(text))
+
+def display_wordcloud(wordcloud):
+    plt.imshow(wordcloud, interpolation='bilinear')
+    plt.axis('off')
+    plt.show()
+
+def save_wordcloud(wordcloud, file_name):
+    print(os.getcwd())
+    directory = 'Affichage_Newspaper'
+    os.chdir(directory)
+    path = 'pictures/' + filename + '.png'
+    wordcloud.to_file(path)

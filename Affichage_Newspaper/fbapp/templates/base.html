@@ -37,6 +37,9 @@
     h3 {
       color: white;
     }
+    a {
+      color: white;
+    }
     legend {
       color: black;
     }
@@ -46,6 +49,9 @@
     }
     hr {
       border-color: rgb(37,48,64);
+    }
+    .authentification-form {
+      padding: 10px 0
     }
   </style>
 
@@ -64,8 +70,16 @@
   <nav class="navbar navbar-inverse navbar-fixed-top" style="background-color: rgb(37,48,64)">
     <div class="container">
       <div class="navbar-header">
-        <h3>Newspaper article selection</h3>
+        <a class="navbar-brand" href="/"><span style="color: white">NewsPaper Selection</span></a>
       </div>
+      <ul class="nav navbar-nav navbar-right">
+        {% if session['logged_in'] %}
+        <li><a href="/logout">Log out</a></li>
+        <li><a href="/profile">My profile</a></li>
+        {% else %}
+        <li><a href="/login">Sign in</a></li>
+        {% endif %}
+      </ul>
     </div>
   </nav>
 

@@ -1,0 +1,65 @@
+{% extends 'base.html' %}
+
+{% block content %}
+
+{% if session['logged_in'] %}
+<div class="container">
+  <div class="starter-template">
+    <div class="row">
+      <div class="col-lg-push-3 col-lg-6">
+        <h5><span style="color: rgb(37,48,64)">You're logged in already!</span></h5>
+      </div>
+    </div>
+  </div>
+</div>
+
+{% else %}
+<div class="container">
+  <div class="starter-template">
+    {% with messages = get_flashed_messages() %}
+      {% if messages %}
+        {% for message in messages %}
+        <div class="row">
+          <div class="col-lg-push-4 col-lg-4">
+            <p><span style="color: red;font-size: 12px">{{ message }}</span></p>
+          </div>
+        </div>
+        {% endfor %}
+      {% endif %}
+    {% endwith %}
+    <form class="form-horizontal col-lg-12" action="/authentification" method="POST">
+      <div class="form-group">
+        <div class="row">
+          <div class="col-lg-push-4 col-lg-4">
+            <div class="authentification-form">
+              <input type="username" class="form-control" name="username" placeholder="Username">
+            </div>
+          </div>
+        </div>
+        <div class="row">
+          <div class="col-lg-push-4 col-lg-4">
+            <div class="authentification-form">
+              <input type="password" class="form-control" name="password" placeholder="Password">
+            </div>
+          </div>
+        </div>
+        <div class="row">
+          <div class="col-lg-push-4 col-lg-4">
+            <div class="authentification-form">
+              <input type="submit" class="form-control" value="Log in">
+            </div>
+          </div>
+        </div>
+      </div>
+    </form>
+    <div class="row">
+      <div class="col-lg-push-4 col-lg-8">
+        <p>Not signed up already? <a href="/login/signup">Sign up</a></p>
+      </div>
+    </div>
+  </div>
+</div>
+
+{% endif %}
+
+{% endblock %}

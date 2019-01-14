@@ -16,14 +16,20 @@ class Article_c(db.Model):
     title = db.Column(db.String(200), nullable=False)
     text = db.Column(db.String(), nullable=False)
     keywords = db.Column(db.String(), nullable=False)
+    note = db.Column(db.Float(), nullable=False)
+    nbVotes = db.Column(db.Integer(), nullable=False) #On a besoin du nombre de votes pour calculer la moyenne
     # authors = db.Column(db.String(), nullable=False) A IMPLEMENTER PLUS TARD: ATTENTION, C'EST UNE LISTE D'AUTEURS QUE L'ON RECOIT GRACE A LA LIBRAIRIE PYTHON
 
+# class Article_note(db.Model):
+#     idarticle = db.Column(db.Integer, primary_key=True)
 
     def __init__(self, url, title, text, keywords):
         self.url = url
         self.title = title
         self.text = text
         self.keywords = keywords
+        self.note = 0.0
+        self.nbVotes = 0
         # self.authors = authors
 
 def keywords(api_key,Text):
@@ -55,4 +61,45 @@ def init_db():
     add_article_to_db('https://www.lemonde.fr/international/article/2018/12/09/migration-marine-le-pen-et-steve-bannon-denoncent-a-bruxelles-le-pacte-avec-le-diable_5394839_3210.html',
                         ['Migration','Marine le Pen'])
     db.session.commit()
-    lg.warning('Database initialized!')
+    lg.warning('Article database initialized !')
+
+## Définition de la table Users qui contient les identifiants et mots de passe des users
+class User(db.Model):
+    __bind_key__ = 'users'
+    id = db.Column(db.Integer, primary_key=True)
+    username = db.Column(db.String(50), nullable=False)
+    password = db.Column(db.String(50), nullable=False)
+    interests = db.Column(db.String(400), nullable=False)
+
+    def __init__(self, username, password, interests):
+        self.username = username
+        self.password = password
+        self.interests = interests
+
+
+# POUR INITIALISER LA BASE DE DONNEES CONTENANT LES MOTS DE PASSE, IL FAUT LANCER DANS LA CONSOLE FLASK_APP=run.py flask init_db_login
+def init_db_login():
+    db.drop_all(bind='users')
+    db.create_all(bind='users')
+    db.session.commit()
+    lg.warning('User accounts database initialized !')
+
+# Table qui contient les articles notés par chaque utilisateur et la note associée (permet d'éviter de noter 2 fois un même article)
+class Votes(db.Model):
+    __bind_key__ = 'votes'
+    id = db.Column(db.Integer, primary_key=True)
+    userid = db.Column(db.Integer, nullable=False)
+    articleid = db.Column(db.Integer, nullable=False)
+    note = db.Column(db.Integer, nullable=False)
+
+    def __init__(self, userid, articleid, note):
+        self.userid = userid
+        self.articleid = articleid
+        self.note = note
+
+# POUR INITIALISER LA BASE DE DONNEES CONTENANT LES MOTS DE PASSE, IL FAUT LANCER DANS LA CONSOLE FLASK_APP=run.py flask init_db_votes
+def init_db_votes():
+    db.drop_all(bind='votes')
+    db.create_all(bind='votes')
+    db.session.commit()
+    lg.warning('User Votes database initialized !')
