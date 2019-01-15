@@ -27,6 +27,18 @@ def find_article_by_keywords(keywords): #prend en argument une liste de string c
     else:
         return 0
 
+def find_article_db(keywords, sources): #prend en argument une liste de string contenant les mots clés
+    articlesMatched = []
+    for key in keywords:
+        article_list = Article_c.query.filter(Article_c.keywords.ilike('%'+key+'%'), Article_c.source_url in sources).all() # on regarde si le mot-clé fait partie des mots-clés de l'article
+        if(len(article_list) > 0):
+            article = rd.choice(article_list)
+            articlesMatched.append(article)
+    if (len(articlesMatched)>0):
+        return articlesMatched
+    else:
+        return 0
+
 News_Sites = ['https://www.theguardian.com','https://www.nytimes.com','https://www.economist.com']
 
 # def find_article_by_keywords_from(keywords, checked):
@@ -59,10 +71,15 @@ def find_article_online(keywords, website):
         article = Article(url)
         article.download()
         article.parse()
+        article.nlp()
+        #print('meta_site_name = {}'.format(article.meta_site_name))
         articlesMatched.append(Article_c(url = url,
                                 title = article.title,
                                 text = article.text,
-                                keywords = stringOfKeywords))
+                                summary = article.summary,
+                                keywords = stringOfKeywords,
+                                source_url = url,
+                                site_name = article.source_url))
     return(articlesMatched)
 
 def find_article_news(keywords, nb_article):
@@ -82,10 +99,15 @@ def find_article_news(keywords, nb_article):
         article = Article(url)
         article.download()
         article.parse()
+        article.nlp()
+        #print('meta_site_name = {}'.format(article.meta_site_name))
         articlesMatched.append(Article_c(url = url,
                                 title = article.title,
                                 text = article.text,
-                                keywords = stringOfKeywords))
+                                summary = article.summary,
+                                keywords = stringOfKeywords,
+                                source_url = url,
+                                site_name = article.source_url))
     return(articlesMatched)
 
 def find_article_news_from(keywords, nb_article_per_website, sources):
@@ -113,16 +135,24 @@ def find_article_news_from(keywords, nb_article_per_website, sources):
             article = Article(url)
             article.download()
             article.parse()
+            article.nlp()
+            #print('meta_site_name = {}'.format(article.meta_site_name))
             articlesMatched.append(Article_c(url = url,
                                     title = article.title,
                                     text = article.text,
-                                    keywords = stringOfKeywords))
+                                    summary = article.summary,
+                                    keywords = stringOfKeywords,
+                                    source_url = url,
+                                    site_name = article.source_url))
         return(articlesMatched)
     else:
         articlesMatched.append(Article_c(url = '',
                                     title = "Pas de résultats",
                                     text = "Désolé, nous n'avons malheureusement pas trouvé de résultats",
-                                    keywords = "Rien du tout"))
+                                    summary = "article.summary",
+                                    keywords = "Rien du tout",
+                                    source_url = "du coup y en a pas",
+                                    site_name = "article.meta_site_name"))
 
 def get_source_site_from_url(url):
     L = url.split('.')
