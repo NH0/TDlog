@@ -50,11 +50,18 @@ def find_article_by_keywords(keywords): #prend en argument une liste de string c
 
 def find_article_db(keywords, sources,numberOfArticles=2): #prend en argument une liste de string contenant les mots clés
     articlesMatched = []
-    for key in keywords:
-        article_list = Article_c.query.filter(Article_c.keywords.ilike('%'+key+'%'), Article_c.source_url in sources).all() # on regarde si le mot-clé fait partie des mots-clés de l'article
-        if(len(article_list) > 0):
-            article = rd.choice(article_list)
-            articlesMatched.append(article)
+    if len(sources)>0:
+        for key in keywords:
+            article_list = Article_c.query.filter(Article_c.keywords.ilike('%'+key+'%'), Article_c.source_url in sources).all() # on regarde si le mot-clé fait partie des mots-clés de l'article
+            if(len(article_list) > 0):
+                article = rd.choice(article_list)
+                articlesMatched.append(article)
+    else:
+        for key in keywords:
+            article_list = Article_c.query.filter(Article_c.keywords.ilike('%'+key+'%')).all() # on regarde si le mot-clé fait partie des mots-clés de l'article
+            if(len(article_list) > 0):
+                article = rd.choice(article_list)
+                articlesMatched.append(article)
     if (len(articlesMatched)>0):
         if (numberOfArticles<len(articlesMatched) and numberOfArticles>0):
             return articlesMatched[:numberOfArticles-1]
