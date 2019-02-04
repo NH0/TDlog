@@ -152,11 +152,4 @@ def notation():
     else:
         session['logged_in'] = False
         flash("You must be logged in to vote !")
-
-    # pprint(articleS)
-    # pprint(stringOfKeywords)
-    # pprint(articleS[0].title)
-    # return render_template('projet.html',
-    #                         articleList = articleS[0:2], # on affiche que les 2 premiers articles
-    #                         searchedKeywords = stringOfKeywords,)
     return redirect(url_for("home"))
