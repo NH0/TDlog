@@ -14,10 +14,15 @@
       <p><strong>Search : </strong>{{ searchedKeywords }}</p>
     </div>
   </div>
+  <div class="row">
+    <div class="col-lg-12">
+      <p><strong>Source website: </strong><a href="{{ article.site_name }}"><span style="color: rgb(37,48,64)">{{ article.site_name }}</span></a></p>
+    </div>
+  </div>
   {% if sources != [] %}
   <div class="row">
     <div class="col-lg-12">
-      <p><strong>Source website: </strong><a href="{{ article.url }}"><span style="color: rgb(37,48,64)">{{ article.url }}</span></a></p>
+      <p><strong>Article url: </strong><a href="{{ article.source_url }}"><span style="color: rgb(37,48,64)">{{ article.source_url }}</span></a></p>
     </div>
   </div>
   {% endif %}
@@ -28,7 +33,7 @@
   </div> -->
   <div class="row">
     <div class="col-lg-8">
-      <p>   {{ article.text|e }}</p>
+      <p>   {{ article.summary|e }}</p>
     </div>
   </div>
   <hr color="blue">
