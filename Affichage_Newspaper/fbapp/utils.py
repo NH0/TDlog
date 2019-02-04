@@ -6,6 +6,27 @@ from fbapp.models import Article_c
 from .basicFunctions import *
 from newspaper import Article
 
+def formatKeywords(keywords):
+    for key in keywords:
+        key = key.lower() # insensible à la casse
+    return keywords
+
+def find_article_db_and_news(keywords,sources=[],numberOfArticles=2):
+    articles_list = find_article_db(keywords, sources,numberOfArticles)  # cherche l'article dans la base de données
+
+    if (articles_list == 0):    # si aucun article ne correspond dans la BDD, le chercher sur google news
+        if len(sources)==0:
+            articles_list = find_article_news(keywords, numberOfArticles)   # cherche nb_article articles
+        else:
+            articles_list = find_article_news_from(keywords, numberOfArticles, sources) # cherche l'article dans la base de données en ne gardant que les articles provenant de certains sites d'information
+            #for article in articles_list:
+                #article.keyword=listToString(liteClient.getKeywords(article.text.encode('utf-8')))))
+                #Cette etape prend du temps, il faut trouver un autre endroit pour le faire
+                #db.session.add(article)
+                #db.session.commit()
+    articles_list = sorted(articles_list, key=lambda x: x.note, reverse=True) #Triés par préférences des utilisateurs
+
+    return articles_list
 
 def find_article(idarticle):
     article_c = Article_c.query.filter(Article_c.idarticle == idarticle).all()
@@ -27,7 +48,7 @@ def find_article_by_keywords(keywords): #prend en argument une liste de string c
     else:
         return 0
 
-def find_article_db(keywords, sources): #prend en argument une liste de string contenant les mots clés
+def find_article_db(keywords, sources,numberOfArticles=2): #prend en argument une liste de string contenant les mots clés
     articlesMatched = []
     for key in keywords:
         article_list = Article_c.query.filter(Article_c.keywords.ilike('%'+key+'%'), Article_c.source_url in sources).all() # on regarde si le mot-clé fait partie des mots-clés de l'article
@@ -35,7 +56,10 @@ def find_article_db(keywords, sources): #prend en argument une liste de string c
             article = rd.choice(article_list)
             articlesMatched.append(article)
     if (len(articlesMatched)>0):
-        return articlesMatched
+        if (numberOfArticles<len(articlesMatched) and numberOfArticles>0):
+            return articlesMatched[:numberOfArticles-1]
+        else:
+            return articlesMatched
     else:
         return 0
 
@@ -93,7 +117,7 @@ def find_article_news(keywords, nb_article):
     """
     stringOfKeywords = listToString(keywords) # insensible à la casse, string avec les mots clés séparés par une ','
     articlesMatched = []
-    sites = google_news_search(keywords, nb_article = 5)
+    sites = google_news_search(keywords, nb_article)
     for url in sites:
         print(url)
         article = Article(url)

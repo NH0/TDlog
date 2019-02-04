@@ -8,9 +8,17 @@
       <div class="col-lg-6">
         <p><strong>My name:</strong> {{ username }}</p>
         <p><strong>My interests:</strong> {{ interests }}</p>
+        <p>
+          <p>
+            <h3><strong><center>The articles of the day</center></strong></h3>
+            <p>
+              {% for articleDay in userArticles %}
+              <h5>{{ articleDay.title|e }}</h5>
+              <p>{{ articleDay.summary|e }}</p>
+              {% endfor %}
       </div>
       <div class="col-lg-6">
-        <p><strong>Le nuage de mots du jour</strong></p>
+        <p><center><strong>Le nuage de mots du jour</strong></center></p>
       </div>
     </div>
   </div>
