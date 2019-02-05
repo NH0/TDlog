@@ -15,13 +15,15 @@
               {% for articleDay in userArticles %}
               <h5>{{ articleDay.title|e }}</h5>
               <p>{{ articleDay.summary|e }}</p>
+              <p>See full text <a href="">here</a>...</p> <!-- USE JAVASCRIPT TO DISPLAY FULL TEXT -->
               {% endfor %}
       </div>
       <div class="col-lg-6">
-        <p><center><strong>Le nuage de mots du jour</strong></center></p>
+        <h3><center><strong>Word cloud of the day</strong></center><h3>
       </div>
     </div>
   </div>
 </div>
 
 {% endblock %}
+ <!-- PRINT FAVORITE ARTICLES -->
