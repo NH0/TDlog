@@ -8,12 +8,22 @@
       <div class="col-lg-6">
         <p><strong>My name:</strong> {{ username }}</p>
         <p><strong>My interests:</strong> {{ interests }}</p>
+        <p>
+          <p>
+            <h3><strong><center>The articles of the day</center></strong></h3>
+            <p>
+              {% for articleDay in userArticles %}
+              <h5>{{ articleDay.title|e }}</h5>
+              <p>{{ articleDay.summary|e }}</p>
+              <p>See full text <a href="">here</a>...</p> <!-- USE JAVASCRIPT TO DISPLAY FULL TEXT -->
+              {% endfor %}
       </div>
       <div class="col-lg-6">
-        <p><strong>Le nuage de mots du jour</strong></p>
+        <h3><center><strong>Word cloud of the day</strong></center><h3>
       </div>
     </div>
   </div>
 </div>
 
 {% endblock %}
+ <!-- PRINT FAVORITE ARTICLES -->
