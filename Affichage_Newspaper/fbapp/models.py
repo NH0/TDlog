@@ -5,6 +5,7 @@ from .views import app
 from .basicFunctions import *
 import config as cf
 from newspaper import Article
+import retinasdk
 
 # Create database connection object
 db = SQLAlchemy(app)
@@ -16,6 +17,9 @@ class Article_c(db.Model):
     title = db.Column(db.String(200), nullable=False)
     text = db.Column(db.String(), nullable=False)
     keywords = db.Column(db.String(), nullable=False)
+    source_url = db.Column(db.String(400), nullable=False)
+    site_name = db.Column(db.String(200), nullable=False)
+    summary = db.Column(db.String(), nullable=False)
     note = db.Column(db.Float(), nullable=False)
     nbVotes = db.Column(db.Integer(), nullable=False) #On a besoin du nombre de votes pour calculer la moyenne
     # authors = db.Column(db.String(), nullable=False) A IMPLEMENTER PLUS TARD: ATTENTION, C'EST UNE LISTE D'AUTEURS QUE L'ON RECOIT GRACE A LA LIBRAIRIE PYTHON
@@ -23,11 +27,14 @@ class Article_c(db.Model):
 # class Article_note(db.Model):
 #     idarticle = db.Column(db.Integer, primary_key=True)
 
-    def __init__(self, url, title, text, keywords):
+    def __init__(self, url, title, text, summary, keywords, source_url, site_name):
         self.url = url
         self.title = title
         self.text = text
+        self.summary = summary
         self.keywords = keywords
+        self.source_url = source_url
+        self.site_name = site_name
         self.note = 0.0
         self.nbVotes = 0
         # self.authors = authors
@@ -45,7 +52,10 @@ def add_article_to_db(url, keywords): # Automatisation du processus pour ajouter
     db.session.add(Article_c(url = url,
                             title = article.title,
                             text = article.text,
-                            keywords = liteClient.getKeywords(article.text)))
+                            summary = article.summary,
+                            keywords = listToString(liteClient.getKeywords(article.text.encode('utf-8'))),
+                            source_url = url,
+                            site_name = article.source_url))
 
 """
 keywords doit être une liste de keywords : ['keyword1','keyword2','keyword3']

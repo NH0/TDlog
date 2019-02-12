@@ -30,22 +30,27 @@ def projet():
             if (request.args.get(news_site)):
                 sources.append(news_site)
 
-    for key in keywords:
-        key = key.lower() # insensible à la casse
+    # for key in keywords:
+    #     key = key.lower() # insensible à la casse
+    keywords = formatKeywords(keywords)
     stringOfKeywords = listToString(keywords)
-    articleS = find_article_by_keywords(keywords)  # cherche l'article dans la base de données
 
-    if (articleS == 0):    # si aucun article ne correspond dans la BDD, le cherche sur google news
-        if len(sources)==0:
-            articleS = find_article_news(keywords, nb_article = 2)   # cherche nb_article articles
-        else:
-            articleS = find_article_news_from(keywords, 2, sources) # cherche l'article dans la base de données en ne gardant que les articles provenant de certains sites d'information
-        # for article in article_c:
-        #     db.session.add(article)
-        # db.session.commit()
-    articleS = sorted(articleS, key=lambda x: x.note, reverse=True) #Triés par préférences des utilisateurs
+    # articles_list = find_article_db(keywords, sources)  # cherche l'article dans la base de données
+    #
+    # if (articles_list == 0):    # si aucun article ne correspond dans la BDD, le chercher sur google news
+    #     if len(sources)==0:
+    #         articles_list = find_article_news(keywords, nb_article = 2)   # cherche nb_article articles
+    #     else:
+    #         articles_list = find_article_news_from(keywords, 2, sources) # cherche l'article dans la base de données en ne gardant que les articles provenant de certains sites d'information
+    #         #for article in articles_list:
+    #             #article.keyword=listToString(liteClient.getKeywords(article.text.encode('utf-8')))))
+    #             #Cette etape prend du temps, il faut trouver un autre endroit pour le faire
+    #             #db.session.add(article)
+    #             #db.session.commit()
+    # articles_list = sorted(articles_list, key=lambda x: x.note, reverse=True) #Triés par préférences des utilisateurs
+    articles_list = find_article_db_and_news(keywords,sources)
     return render_template('projet.html',
-                            articleList = articleS[0:2], # on affiche que les 2 premiers articles
+                            articleList = articles_list[0:2], # on affiche que les 2 premiers articles
                             searchedKeywords = stringOfKeywords,)
 
 @app.route('/', methods=['GET', 'POST'])
@@ -119,22 +124,24 @@ def register_signup():
 @app.route('/profile', methods=['GET', 'POST'])
 def profile():
     if ('logged_in' in session) and session['logged_in']:
-        interests = find_interests_in_db(session['username'])
-        interests = interests.replace(" ","").split(',')
+        userInterests = find_interests_in_db(session['username'])
+        interests = userInterests.replace(" ","").split(',')
         return render_template('profile.html',
                                 username = session['username'],
-                                interests = interests)
+                                interests =interests,
+                                userArticles = find_article_db_and_news(list(userInterests)))
     else:
         flash("You must be logged in to view your profile !")
         return redirect(url_for("login_page"))
 
-@app.route('/rateArticle/<id>', methods=['GET','POST'])
-def notation(id):
+@app.route('/rateArticle', methods=['GET','POST'])
+def notation():
     if ('logged_in' in session) and session['logged_in']:
-        if not( Votes.query.filter_by(userid = session['uid'],articleid = id).count() ):
 
-            id = int(id)
-            noteA = int(request.form['note'])
+        id = int(request.form['idA'])
+        noteA = int(request.form['note'])
+
+        if not( Votes.query.filter_by(userid = session['uid'],articleid = id).count() ):
             articleNoted = Article_c.query.filter_by(idarticle = id).first()
             articleNoted.note = round((articleNoted.note * articleNoted.nbVotes + noteA) / (articleNoted.nbVotes + 1),1)
             articleNoted.nbVotes = articleNoted.nbVotes + 1
@@ -145,7 +152,6 @@ def notation(id):
                                       articleid=id,
                                       note = noteA))
             db.session.commit()
-
             flash("You rated \""+articleNoted.title+"\" "+str(noteA)+"/5.")
 
         else:
@@ -154,11 +160,4 @@ def notation(id):
     else:
         session['logged_in'] = False
         flash("You must be logged in to vote !")
-
-    # pprint(articleS)
-    # pprint(stringOfKeywords)
-    # pprint(articleS[0].title)
-    # return render_template('projet.html',
-    #                         articleList = articleS[0:2], # on affiche que les 2 premiers articles
-    #                         searchedKeywords = stringOfKeywords,)
     return redirect(url_for("home"))
