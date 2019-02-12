@@ -119,9 +119,11 @@ def register_signup():
 @app.route('/profile', methods=['GET', 'POST'])
 def profile():
     if ('logged_in' in session) and session['logged_in']:
+        interests = find_interests_in_db(session['username'])
+        interests = interests.replace(" ","").split(',')
         return render_template('profile.html',
                                 username = session['username'],
-                                interests = find_interests_in_db(session['username']))
+                                interests = interests)
     else:
         flash("You must be logged in to view your profile !")
         return redirect(url_for("login_page"))
