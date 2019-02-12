@@ -158,3 +158,4 @@ def get_source_site_from_url(url):
     L = url.split('.')
     source_site = L[0].split('/')[2]
     print(source_site)
+    

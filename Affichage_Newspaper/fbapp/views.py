@@ -121,9 +121,16 @@ def register_signup():
 @app.route('/profile', methods=['GET', 'POST'])
 def profile():
     if ('logged_in' in session) and session['logged_in']:
+        url_list = google_news_search(StringToList(find_interests_in_db(session['username'])), nb_article = 5, time = 'day')
+        cloud = wordcloud_url(url_list, 20, session['username']+'_daily')
         return render_template('profile.html',
                                 username = session['username'],
-                                interests = find_interests_in_db(session['username']))
+                                interests = find_interests_in_db(session['username']),
+                                wordcloud = cloud,
+                                #image_link = upload_wordcloud('../pictures/', session['username']+'_daily')
+                                #image_path = save_wordcloud(cloud, session['username']+'_daily')
+                                cloud_name = save_wordcloud(cloud, session['username']+'_daily'),
+                                recommendation = url_list)
     else:
         flash("You must be logged in to view your profile !")
         return redirect(url_for("login_page"))
