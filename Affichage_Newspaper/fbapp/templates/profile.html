@@ -9,11 +9,9 @@
         <p><strong>My name:</strong> {{ username }}</p>
         <p><strong>My interests:</strong> {{ interests }}</p>
         <p><strong>Today's selection:</strong></p>
-        <ul>
-          <li>{{ recommendation[0] }}</li>
-          <li>{{ recommendation[1] }}</li>
-          <li>{{ recommendation[2] }}</li>
-        </ul>
+        {% for article in recommendation %}
+        <p><a target="_blank" href="{{ article.url }}" style="color: rgb(37,48,64)" >{{ article.title }}</a></p>
+        {% endfor %}
       </div>
       <div class="col-lg-6">
         <p><strong>Le nuage de mots du jour</strong></p>

@@ -137,7 +137,7 @@ def profile():
                                 #image_link = upload_wordcloud('../pictures/', session['username']+'_daily')
                                 #image_path = save_wordcloud(cloud, session['username']+'_daily')
                                 cloud_name = save_wordcloud(cloud, session['username']+'_daily'),
-                                recommendation = urls)
+                                recommendation = articles)
     else:
         flash("You must be logged in to view your profile !")
         return redirect(url_for("login_page"))
