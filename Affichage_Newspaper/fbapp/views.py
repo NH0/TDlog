@@ -124,12 +124,20 @@ def register_signup():
 @app.route('/profile', methods=['GET', 'POST'])
 def profile():
     if ('logged_in' in session) and session['logged_in']:
-        userInterests = find_interests_in_db(session['username'])
-        interests = userInterests.replace(" ","").split(',')
+        keywords = StringToList(find_interests_in_db(session['username']))
+        articles = find_article_news(keywords, 5)
+        urls = []
+        for article in articles:
+            urls.append(article.url)
+        cloud = wordcloud_url(urls, 20, session['username']+'_daily')
         return render_template('profile.html',
                                 username = session['username'],
-                                interests =interests,
-                                userArticles = find_article_db_and_news(list(userInterests)))
+                                interests = find_interests_in_db(session['username']),
+                                wordcloud = cloud,
+                                #image_link = upload_wordcloud('../pictures/', session['username']+'_daily')
+                                #image_path = save_wordcloud(cloud, session['username']+'_daily')
+                                cloud_name = save_wordcloud(cloud, session['username']+'_daily'),
+                                recommendation = articles)
     else:
         flash("You must be logged in to view your profile !")
         return redirect(url_for("login_page"))
