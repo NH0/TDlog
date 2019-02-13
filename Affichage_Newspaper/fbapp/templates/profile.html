@@ -7,22 +7,18 @@
     <div class="row">
       <div class="col-lg-6">
         <p><strong>My name:</strong> {{ username }}</p>
-        <p><strong>My interests:</strong> {% for interest in interests %}<a href="/article?keywords={{ interest }}" style="color: rgb(37,48,64)">{{ interest }}</a>{% if interest != interests[-1] %}, {% endif %}{% endfor %}.</p>
-            <h3 style="color: rgb(37,48,64)"><strong><center>The articles of the day</center></strong></h3>
-            <p>
-              {% for articleDay in userArticles %}
-              <h5>{{ articleDay.title|e }}</h5>
-              <p>{{ articleDay.summary|e }}</p>
-              <p>See full text <a href="">here</a>...</p> <!-- USE JAVASCRIPT TO DISPLAY FULL TEXT -->
-              {% endfor %}
+        <p><strong>My interests:</strong> {{ interests }}</p>
+        <p><strong>Today's selection:</strong></p>
+        {% for article in recommendation %}
+        <p><a target="_blank" href="{{ article.url }}" style="color: rgb(37,48,64)" >{{ article.title }}</a></p>
+        {% endfor %}
       </div>
-
       <div class="col-lg-6">
-        <h3><center><strong>Word cloud of the day</strong></center><h3>
+        <p><strong>Le nuage de mots du jour</strong></p>
+        <p><img src= {{ url_for('static', filename = cloud_name) }} alt="Today's cloud"></p>
       </div>
     </div>
   </div>
 </div>
 
 {% endblock %}
- <!-- PRINT FAVORITE ARTICLES -->
