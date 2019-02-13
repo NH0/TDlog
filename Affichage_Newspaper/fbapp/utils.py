@@ -72,13 +72,6 @@ def find_article_db(keywords, sources,numberOfArticles=2): #prend en argument un
 
 News_Sites = ['https://www.theguardian.com','https://www.nytimes.com','https://www.economist.com']
 
-# def find_article_by_keywords_from(keywords, checked):
-#     articles_found = find_article_by_keywords(keywords)
-#     for k in range(len(checked)):
-#         if ()
-#     for article in articles_found:
-#
-
 
 # def findSynonyms(word):
 #     SetOfSynonyms = wordnet.synsets(word)
@@ -189,4 +182,3 @@ def get_source_site_from_url(url):
     L = url.split('.')
     source_site = L[0].split('/')[2]
     print(source_site)
-    
