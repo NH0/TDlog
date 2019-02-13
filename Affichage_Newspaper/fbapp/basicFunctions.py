@@ -21,8 +21,7 @@ def listToString(keywords): # Pour l'affichage lorsqu'aucun article n'est trouv√
     return keystring
 
 def StringToList(str): # Pour l'affichage lorsqu'aucun article n'est trouv√©
-    L = re.sub("[^\w]", " ",  str).split()
-    return L
+    return(str.split(', '))
 
 def time_to_parameter(time):
     if (time == 'hour'):
@@ -145,7 +144,6 @@ Fonction qui prend un chemin et transforme en un string du texte
 def wordcloud_url(url_list, nb_words, name):
     text = ''
     for url in url_list:
-        print(url)
         article = Article(url)
         article.download()
         article.parse()
@@ -183,6 +181,7 @@ if __name__ == '__main__':
     text = fichier.read()
     stop_english = get_stop_words('english')
     test = create_wordcloud(text, 20, stop_english)
-    #display_wordcloud(test)
-    save_wordcloud(test, 'transparent')
-    #test = google_news_website(['cesq', 'fabregas', 'monaco'], 'www.mirror.co.uk', 2)
+    # #display_wordcloud(test)
+    # save_wordcloud(test, 'transparent')
+    # #test = google_news_website(['cesq', 'fabregas', 'monaco'], 'www.mirror.co.uk', 2)
+    print(type("hey"))

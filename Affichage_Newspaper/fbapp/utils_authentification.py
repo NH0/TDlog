@@ -13,3 +13,11 @@ def user_not_in_database(username):
 def find_interests_in_db(username):
     query = User.query.filter_by(username=username).first()
     return query.interests
+
+def find_cloud_in_db(username):
+    query = User.query.filter_by(username=username).first()
+    return query.wordcloud
+
+def find_recommandation_in_db(username):
+    query = User.query.filter_by(username=username).first()
+    return query.recommendation

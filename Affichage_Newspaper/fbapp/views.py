@@ -9,7 +9,7 @@ db = SQLAlchemy(app)
 hashing = Hashing(app)
 
 from .utils import *
-from .utils_authentification import login_successful, user_not_in_database, find_interests_in_db
+from .utils_authentification import *
 from newspaper import Article
 from .models import User, Article_c, Votes
 
@@ -109,10 +109,15 @@ def register_signup():
     password = request.form['password']
     interests = request.form['interests']
     password = hashing.hash_value(password, salt='GrisThibVeloCast')
+    # generation du wordcloud lors du sign up
+    keywords = StringToList(interests)
+    articles = find_article_news(keywords, 5)
     if(user_not_in_database(username)):
         db.session.add(User(username = username,
                             password = password,
-                            interests = interests))
+                            interests = interests,
+                            # wordcloud = cloud,
+                            recommendation = articles))
         db.session.commit()
         flash("You are now registered, welcome :)") #Registered but not logged in ! maybe redirect to login.html ?
         return redirect(url_for("login_page"))
@@ -124,18 +129,23 @@ def register_signup():
 @app.route('/profile', methods=['GET', 'POST'])
 def profile():
     if ('logged_in' in session) and session['logged_in']:
-        keywords = StringToList(find_interests_in_db(session['username']))
-        articles = find_article_news(keywords, 5)
+        # keywords = StringToList(find_interests_in_db(session['username']))
+        # articles = find_article_news(keywords, 5)
+        # urls = []
+        # for article in articles:
+        #     urls.append(article.url)
+        # cloud = wordcloud_url(urls, 20, session['username']+'_daily')
+        recom = find_recommandation_in_db(session['username'])
         urls = []
-        for article in articles:
+        for article in recom:
             urls.append(article.url)
         cloud = wordcloud_url(urls, 20, session['username']+'_daily')
         return render_template('profile.html',
                                 username = session['username'],
-                                interests = find_interests_in_db(session['username']),
+                                interests = StringToList(find_interests_in_db(session['username'])),
                                 wordcloud = cloud,
                                 cloud_name = save_wordcloud(cloud, session['username']+'_daily'),
-                                recommendation = articles)
+                                recommendation = recom)
     else:
         flash("You must be logged in to view your profile !")
         return redirect(url_for("login_page"))

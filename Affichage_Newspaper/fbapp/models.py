@@ -5,6 +5,7 @@ from .views import app
 from .basicFunctions import *
 import config as cf
 from newspaper import Article
+from wordcloud import WordCloud
 import retinasdk
 
 # Create database connection object
@@ -80,12 +81,15 @@ class User(db.Model):
     username = db.Column(db.String(50), nullable=False)
     password = db.Column(db.String(50), nullable=False)
     interests = db.Column(db.String(400), nullable=False)
+    # wordcloud = db.Column(db.PickleType(), nullable=True)
+    recommendation = db.Column(db.PickleType(), nullable=True)
 
-    def __init__(self, username, password, interests):
+    def __init__(self, username, password, interests, recommendation):
         self.username = username
         self.password = password
         self.interests = interests
-
+        # self.wordcloud = wordcloud
+        self.recommendation = recommendation
 
 # POUR INITIALISER LA BASE DE DONNEES CONTENANT LES MOTS DE PASSE, IL FAUT LANCER DANS LA CONSOLE FLASK_APP=run.py flask init_db_login
 def init_db_login():

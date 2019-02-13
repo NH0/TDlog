@@ -7,15 +7,15 @@
     <div class="row">
       <div class="col-lg-6">
         <p><strong>My name:</strong> {{ username }}</p>
-        <p><strong>My interests:</strong> {{ interests }}</p>
+        <p><strong>My interests:</strong> {% for interest in interests %}<a href="/article?keywords={{ interest }}" style="color: rgb(37,48,64)">{{ interest }}</a>{% if interest != interests[-1] %}, {% endif %}{% endfor %}.</p>
         <p><strong>Today's selection:</strong></p>
         {% for article in recommendation %}
         <p><a target="_blank" href="{{ article.url }}" style="color: rgb(37,48,64)" >{{ article.title }}</a></p>
         {% endfor %}
       </div>
       <div class="col-lg-6">
-        <p><strong>Le nuage de mots du jour</strong></p>
-        <p><img src= {{ url_for('static', filename = cloud_name) }} alt="Today's cloud"></p>
+        <p><strong><center>Today's trends:</center></strong></p>
+        <p><center><img src= {{ url_for('static', filename = cloud_name) }} alt="Today's cloud"></center></p>
       </div>
     </div>
   </div>
