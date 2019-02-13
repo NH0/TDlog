@@ -134,8 +134,6 @@ def profile():
                                 username = session['username'],
                                 interests = find_interests_in_db(session['username']),
                                 wordcloud = cloud,
-                                #image_link = upload_wordcloud('../pictures/', session['username']+'_daily')
-                                #image_path = save_wordcloud(cloud, session['username']+'_daily')
                                 cloud_name = save_wordcloud(cloud, session['username']+'_daily'),
                                 recommendation = articles)
     else:
