@@ -64,19 +64,19 @@
 
         </div>
       </form>
+      <script>
+        $(document).ready(function() {
+          alert('hello');
+          let button = $('#form-rate input');
+          button.on('click',function() {
+              alert("test");
+              $.get( '/rateArticle', {"note":$('#note').val(), "idA":$('#form-rate').attr('idA')} )
+           });
+        });
+      </script>
     </div>
   </div>
   <hr color="blue">
-  <script>
-    $(document).ready(function() {
-      alert('hello');
-      let button = $('#form-rate input');
-      button.on('click',function() {
-          alert("test");
-          $.get( '/rateArticle', {"note":$('#note').val(), "idA":$('#form-rate').attr('idA')} )
-       });
-    });
-  </script>
 </div>
 
 

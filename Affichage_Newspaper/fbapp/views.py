@@ -105,6 +105,14 @@ def register_signup():
         flash("Enter at least one interest please !")
         return render_template('sign-up.html')
 
+    if len(password) < 6:
+        flash("Passwords must be at least 6 characters !")
+        return render_template('sign-up.html')
+
+    if len(username) < 3:
+        flash("Usernames must be at least 3 characters !")
+        return render_template('sign-up.html')
+
     password = hashing.hash_value(password, salt='GrisThibVeloCast')
 
     keywords = StringToList(interests)
