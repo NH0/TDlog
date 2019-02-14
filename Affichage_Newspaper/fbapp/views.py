@@ -151,14 +151,15 @@ def profile():
     if ('logged_in' in session) and session['logged_in']:
         if request.method == 'POST':
             new_interest = request.form['add-interest']
-            new_interest = formatKeywords(new_interest)
-            isNewInterest = new_interest in StringToList(User.query.filter_by(username = session['username']).first().interests)
+            if len(new_interest) > 0:
+                new_interest = formatKeywords(new_interest)
+                isNewInterest = new_interest in StringToList(User.query.filter_by(username = session['username']).first().interests)
 
-            if not(isNewInterest):
-                user = User.query.filter_by(username = session['username']).first()
-                user.interests = user.interests + ', ' + new_interest
-                db.session.merge(user)
-                db.session.commit()
+                if not(isNewInterest):
+                    user = User.query.filter_by(username = session['username']).first()
+                    user.interests = user.interests + ', ' + new_interest
+                    db.session.merge(user)
+                    db.session.commit()
         # keywords = StringToList(find_interests_in_db(session['username']))
         # articles = find_article_news(keywords, 5)
         # urls = []
@@ -171,7 +172,7 @@ def profile():
         return render_template('profile.html',
                                 username = session['username'],
                                 interests = interests,
-                                #wordcloud = cloud,
+                                #wordcloEnter at least one interest pleaseud = cloud,
                                 #cloud_name = save_wordcloud(cloud, session['username']+'_daily'),
                                 cloud_name = cloud_name,
                                 recommendation = recom)
