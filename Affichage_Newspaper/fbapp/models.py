@@ -81,15 +81,15 @@ class User(db.Model):
     username = db.Column(db.String(50), nullable=False)
     password = db.Column(db.String(50), nullable=False)
     interests = db.Column(db.String(400), nullable=False)
-    # wordcloud = db.Column(db.PickleType(), nullable=True)
     recommendation = db.Column(db.PickleType(), nullable=True)
+    cloud_path = db.Column(db.String(), nullable=True)
 
-    def __init__(self, username, password, interests, recommendation):
+    def __init__(self, username, password, interests, recommendation, cloud_path):
         self.username = username
         self.password = password
         self.interests = interests
-        # self.wordcloud = wordcloud
         self.recommendation = recommendation
+        self.cloud_path = cloud_path
 
 # POUR INITIALISER LA BASE DE DONNEES CONTENANT LES MOTS DE PASSE, IL FAUT LANCER DANS LA CONSOLE FLASK_APP=run.py flask init_db_login
 def init_db_login():

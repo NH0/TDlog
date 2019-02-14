@@ -107,7 +107,7 @@ def display_wordcloud(wordcloud):
 def save_wordcloud(wordcloud, file_name):
     path = 'css/images/' + file_name + '.png'
     save_path = 'fbapp/static/' + path
-    print('path = {}'.format(path))
+    #print('path = {}'.format(path))
     print('save_path = {}'.format(save_path))
     wordcloud.to_file(save_path)
     return(path)

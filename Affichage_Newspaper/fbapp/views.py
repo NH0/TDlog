@@ -116,13 +116,19 @@ def register_signup():
     password = hashing.hash_value(password, salt='GrisThibVeloCast')
     # generation du wordcloud lors du sign up
     keywords = StringToList(interests)
-    articles = find_api(keywords, 5)
+    articles = find_api(keywords, 3)
+    urls = []
+    for article in articles:
+        urls.append(article.url)
+    cloud_name = session['username']+'_daily'
+    wordcloud_url(urls, 20, cloud_name)
+    cloud_path = 'css/images/' + cloud_name + '.png'
     if(user_not_in_database(username)):
         db.session.add(User(username = username,
                             password = password,
                             interests = interests,
-                            # wordcloud = cloud,
-                            recommendation = articles))
+                            recommendation = articles,
+                            cloud_path = cloud_path))
         db.session.commit()
         flash("You are now registered, welcome :)") #Registered but not logged in ! maybe redirect to login.html ?
         return redirect(url_for("login_page"))
@@ -146,16 +152,15 @@ def profile():
         # for article in articles:
         #     urls.append(article.url)
         # cloud = wordcloud_url(urls, 20, session['username']+'_daily')
+        interests = StringToList(find_interests_in_db(session['username']))
         recom = find_recommandation_in_db(session['username'])
-        urls = []
-        for article in recom:
-            urls.append(article.url)
-        cloud = wordcloud_url(urls, 20, session['username']+'_daily')
+        cloud_name = find_cloud_path_in_db(session['username'])
         return render_template('profile.html',
                                 username = session['username'],
-                                interests = StringToList(find_interests_in_db(session['username'])),
-                                wordcloud = cloud,
-                                cloud_name = save_wordcloud(cloud, session['username']+'_daily'),
+                                interests = interests,
+                                #wordcloud = cloud,
+                                #cloud_name = save_wordcloud(cloud, session['username']+'_daily'),
+                                cloud_name = cloud_name,
                                 recommendation = recom)
     else:
         flash("You must be logged in to view your profile !")
