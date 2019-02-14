@@ -195,11 +195,11 @@ def notation():
                                  note = noteA))
             db.session.commit()
             pprint("You rated \""+articleNoted.title+"\" "+str(noteA)+"/5.")
-            return redirect(url_for('home'))
+            return redirect(url_for('profile'))
 
         else:
             pprint("You already rated the article !")
-            return redirect(url_for('home'))
+            #return redirect(url_for('profile'))
 
     else:
         session['logged_in'] = False

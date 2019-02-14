@@ -57,15 +57,26 @@
         </div>
         <div class="col-lg-2">
           <div class="button">
-            <input type="submit" class="form-control" value="Rate !">
-            <script src="{{ url_for('static', filename='js/ratings.js') }}"></script> <!--ajouter attribue onclick="nomFctJS(article.id)" nomFctJS devra utiliser une autre fct pour recup valeur de select en jquery
+            <button class="form-control" >Rate !</button>
+             <!--ajouter attribue onclick="nomFctJS(article.id)" nomFctJS devra utiliser une autre fct pour recup valeur de select en jquery
           ("note").val() faire JSON AJAX ou bien document.getElementById("note") get.JSON{nomderoute, {...}}-->
           </div>
+
         </div>
       </form>
     </div>
   </div>
   <hr color="blue">
+  <script>
+    $(document).ready(function() {
+      alert('hello');
+      let button = $('#form-rate input');
+      button.on('click',function() {
+          alert("test");
+          $.get( '/rateArticle', {"note":$('#note').val(), "idA":$('#form-rate').attr('idA')} )
+       });
+    });
+  </script>
 </div>
 
 
