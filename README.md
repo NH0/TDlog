@@ -21,3 +21,5 @@ pip install retinasdk
 pip install stop-words
 
 pip install google
+
+pip install newsapi-python

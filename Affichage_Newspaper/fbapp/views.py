@@ -8,7 +8,7 @@ app.config.from_object('config')
 db = SQLAlchemy(app)
 hashing = Hashing(app)
 
-from .utils import * # Fonctions utilitaires, 
+from .utils import * # Fonctions utilitaires,
 from .utils_authentification import *
 from newspaper import Article
 from .models import User, Article_c, Votes
@@ -20,23 +20,43 @@ def projet():
     sources = []
 
     if request.method == 'POST':
-        keywords = request.form['keywords'].replace(" ","").split(',') # créer une liste de string contenant les mots-clés
+        keywords = StringToList(request.form['keywords']) # créer une liste de string contenant les mots-clés
         for news_site in News_Sites:
             if(request.form.get(news_site)):
                 sources.append(news_site)
     else:
-        keywords = request.args.get('keywords').replace(" ","").split(',')
+        keywords = StringToList(request.args.get('keywords'))
         for news_site in News_Sites:
             if (request.args.get(news_site)):
                 sources.append(news_site)
 
-    keywords = formatKeywords(keywords)
-    stringOfKeywords = listToString(keywords)
+    if keywords != ["" for k in range(len(keywords))]:
+        # for key in keywords:
+        #     key = key.lower() # insensible à la casse
+        keywords = formatKeywords(keywords)
+        stringOfKeywords = listToString(keywords)
 
-    articles_list = find_article_db_and_news(keywords,sources)
-    return render_template('projet.html',
-                            articleList = articles_list[0:2], # on affiche que les 2 premiers articles
-                            searchedKeywords = stringOfKeywords,)
+        # articles_list = find_article_db(keywords, sources)  # cherche l'article dans la base de données
+        #
+        # if (articles_list == 0):    # si aucun article ne correspond dans la BDD, le chercher sur google news
+        #     if len(sources)==0:
+        #         articles_list = find_article_news(keywords, nb_article = 2)   # cherche nb_article articles
+        #     else:
+        #         articles_list = find_article_news_from(keywords, 2, sources) # cherche l'article dans la base de données en ne gardant que les articles provenant de certains sites d'information
+        #         #for article in articles_list:
+        #             #article.keyword=listToString(liteClient.getKeywords(article.text.encode('utf-8')))))
+        #             #Cette etape prend du temps, il faut trouver un autre endroit pour le faire
+        #             #db.session.add(article)
+        #             #db.session.commit()
+        # articles_list = sorted(articles_list, key=lambda x: x.note, reverse=True) #Triés par préférences des utilisateurs
+        articles_list = find_article_api_from(keywords, 2, sources)
+        #articles_list = find_article_db_and_news(keywords,sources)
+        return render_template('projet.html',
+                                articleList = articles_list, # on affiche que les 2 premiers articles
+                                searchedKeywords = stringOfKeywords)
+    else:
+        flash("You have to enter a keyword")
+        return redirect(url_for("home"))
 
 @app.route('/', methods=['GET', 'POST'])
 @app.route('/home/')
@@ -96,13 +116,19 @@ def register_signup():
     password = hashing.hash_value(password, salt='GrisThibVeloCast')
     # generation du wordcloud lors du sign up
     keywords = StringToList(interests)
-    articles = find_article_news(keywords, 5)
+    articles = find_api(keywords, 3)
+    urls = []
+    for article in articles:
+        urls.append(article.url)
+    cloud_name = session['username']+'_daily'
+    wordcloud_url(urls, 20, cloud_name)
+    cloud_path = 'css/images/' + cloud_name + '.png'
     if(user_not_in_database(username)):
         db.session.add(User(username = username,
                             password = password,
                             interests = interests,
-                            # wordcloud = cloud,
-                            recommendation = articles))
+                            recommendation = articles,
+                            cloud_path = cloud_path))
         db.session.commit()
         flash("You are now registered, welcome :)") #Registered but not logged in ! maybe redirect to login.html ?
         return redirect(url_for("login_page"))
@@ -114,22 +140,27 @@ def register_signup():
 @app.route('/profile', methods=['GET', 'POST'])
 def profile():
     if ('logged_in' in session) and session['logged_in']:
+        if request.method == 'POST':
+            new_interest = request.form['add-interest']
+            user = User.query.filter_by(username = session['username']).first()
+            user.interests = user.interests + ', ' + new_interest
+            db.session.merge(user)
+            db.session.commit()
         # keywords = StringToList(find_interests_in_db(session['username']))
         # articles = find_article_news(keywords, 5)
         # urls = []
         # for article in articles:
         #     urls.append(article.url)
         # cloud = wordcloud_url(urls, 20, session['username']+'_daily')
+        interests = StringToList(find_interests_in_db(session['username']))
         recom = find_recommandation_in_db(session['username'])
-        urls = []
-        for article in recom:
-            urls.append(article.url)
-        cloud = wordcloud_url(urls, 20, session['username']+'_daily')
+        cloud_name = find_cloud_path_in_db(session['username'])
         return render_template('profile.html',
                                 username = session['username'],
-                                interests = StringToList(find_interests_in_db(session['username'])),
-                                wordcloud = cloud,
-                                cloud_name = save_wordcloud(cloud, session['username']+'_daily'),
+                                interests = interests,
+                                #wordcloud = cloud,
+                                #cloud_name = save_wordcloud(cloud, session['username']+'_daily'),
+                                cloud_name = cloud_name,
                                 recommendation = recom)
     else:
         flash("You must be logged in to view your profile !")

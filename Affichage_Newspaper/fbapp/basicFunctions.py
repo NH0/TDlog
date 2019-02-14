@@ -10,8 +10,10 @@ import os
 from stop_words import get_stop_words
 from newspaper import Article
 import pyimgur
+from newsapi import NewsApiClient
 
 CLIENT_ID = "9f812cf018aa2cb"
+newsapi_key = "d2f6b8506b584d45b8ddbb7b19814ca1"
 
 def listToString(keywords): # Pour l'affichage lorsqu'aucun article n'est trouvé
     keystring = ""
@@ -105,7 +107,7 @@ def display_wordcloud(wordcloud):
 def save_wordcloud(wordcloud, file_name):
     path = 'css/images/' + file_name + '.png'
     save_path = 'fbapp/static/' + path
-    print('path = {}'.format(path))
+    #print('path = {}'.format(path))
     print('save_path = {}'.format(save_path))
     wordcloud.to_file(save_path)
     return(path)
@@ -171,17 +173,30 @@ def wordcloud_keyword(keyword_list, nb_words, name):
     save_wordcloud(cloud, name)
     return(cloud)
 
+# utilisation api News api
 
+newsapi = NewsApiClient(api_key=newsapi_key)
+
+def get_api(keywords, nb_article, website=''):
+    query = ''
+    for keyword in keywords:
+        query += keyword + ' '
+    if (len(website)!=0):
+        query += 'site:' + website
+    #top_headlines = newsapi.get_top_headlines(q=query, language='en', country='gb')
+    search = newsapi.get_everything(q=query, language='en')
+    articles = search["articles"]
+    return(articles)
 
 if __name__ == '__main__':
     # sites = google_news_search('politics', nb_article = 5, time = 'day')
     # wordcloud2(['politics', 'brexit'], 20, 'test5')
     #print(upload_wordcloud('static/css/images', 'clems_daily'))
-    fichier = open('fbapp/texte.txt', 'r')
-    text = fichier.read()
-    stop_english = get_stop_words('english')
-    test = create_wordcloud(text, 20, stop_english)
+    # fichier = open('fbapp/texte.txt', 'r')
+    # text = fichier.read()
+    # stop_english = get_stop_words('english')
+    # test = create_wordcloud(text, 20, stop_english)
     # #display_wordcloud(test)
     # save_wordcloud(test, 'transparent')
     # #test = google_news_website(['cesq', 'fabregas', 'monaco'], 'www.mirror.co.uk', 2)
-    print(type("hey"))
+    get_api(['bitcoin', 'island'], 5)

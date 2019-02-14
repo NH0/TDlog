@@ -21,3 +21,7 @@ def find_cloud_in_db(username):
 def find_recommandation_in_db(username):
     query = User.query.filter_by(username=username).first()
     return query.recommendation
+
+def find_cloud_path_in_db(username):
+    query = User.query.filter_by(username=username).first()
+    return query.cloud_path
