@@ -32,7 +32,7 @@ def projet():
                 sources.append(news_site)
 
     else:
-        flash("You have to enter a keyword")
+        flash("You have to enter a keyword !")
         return redirect(url_for("home"))
 
     if keywords != ["" for k in range(len(keywords))]:
@@ -143,10 +143,14 @@ def profile():
     if ('logged_in' in session) and session['logged_in']:
         if request.method == 'POST':
             new_interest = request.form['add-interest']
-            user = User.query.filter_by(username = session['username']).first()
-            user.interests = user.interests + ', ' + new_interest
-            db.session.merge(user)
-            db.session.commit()
+            new_interest = formatKeywords(new_interest)
+            isNewInterest = new_interest in StringToList(User.query.filter_by(username = session['username']).first().interests)
+
+            if not(isNewInterest):
+                user = User.query.filter_by(username = session['username']).first()
+                user.interests = user.interests + ', ' + new_interest
+                db.session.merge(user)
+                db.session.commit()
         # keywords = StringToList(find_interests_in_db(session['username']))
         # articles = find_article_news(keywords, 5)
         # urls = []
@@ -167,29 +171,37 @@ def profile():
         flash("You must be logged in to view your profile !")
         return redirect(url_for("login_page"))
 
-@app.route('/rateArticle', methods=['GET','POST'])
+@app.route('/rateArticle', methods=['GET'])
 def notation():
+    pprint("Inside notation")
     if ('logged_in' in session) and session['logged_in']:
 
+        # id = int(request.form['idA'])
+        # noteA = int(request.form['note'])
+        id = int(request.args.get('idA'))
+        noteA = int(request.args.get('note'))
+
         if not( Votes.query.filter_by(userid = session['uid'],articleid = id).count() ):
-            id = int(request.form['idA'])
-            noteA = int(request.form['note'])
 
             articleNoted = Article_c.query.filter_by(idarticle = id).first()
             articleNoted.note = round((articleNoted.note * articleNoted.nbVotes + noteA) / (articleNoted.nbVotes + 1),1)
             articleNoted.nbVotes = articleNoted.nbVotes + 1
+
             db.session.merge(articleNoted)
             db.session.commit()
 
             db.session.add(Votes(userid=session['uid'],
-                                      articleid=id,
-                                      note = noteA))
+                                 articleid=id,
+                                 note = noteA))
             db.session.commit()
-            flash("You rated \""+articleNoted.title+"\" "+str(noteA)+"/5.")
+            pprint("You rated \""+articleNoted.title+"\" "+str(noteA)+"/5.")
+            return redirect(url_for('home'))
 
         else:
-            flash("You already rated the article !")
+            pprint("You already rated the article !")
+            return redirect(url_for('home'))
 
     else:
         session['logged_in'] = False
-        flash("You must be logged in to vote !")
+        pprint("You must be logged in to vote !")
+        return redirect(url_for('home'))

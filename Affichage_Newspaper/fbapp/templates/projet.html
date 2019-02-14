@@ -57,7 +57,8 @@
         </div>
         <div class="col-lg-2">
           <div class="button">
-            <input type="submit" class="form-control" value="Rate !"> <!--ajouter attribue onclick="nomFctJS(article.id)" nomFctJS devra utiliser une autre fct pour recup valeur de select en jquery
+            <input type="submit" class="form-control" value="Rate !">
+            <script src="{{ url_for('static', filename='js/ratings.js') }}"></script> <!--ajouter attribue onclick="nomFctJS(article.id)" nomFctJS devra utiliser une autre fct pour recup valeur de select en jquery
           ("note").val() faire JSON AJAX ou bien document.getElementById("note") get.JSON{nomderoute, {...}}-->
           </div>
         </div>
@@ -69,5 +70,5 @@
 
 
 {% endfor %}
-<script src="{{ url_for('static', filename='js/ratings.js') }}"></script>
+
 {% endblock %}
