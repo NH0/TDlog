@@ -20,12 +20,12 @@ def projet():
     sources = []
 
     if request.method == 'POST':
-        keywords = request.form['keywords'].replace(" ","").split(',') # créer une liste de string contenant les mots-clés
+        keywords = StringToList(request.form['keywords']) # créer une liste de string contenant les mots-clés
         for news_site in News_Sites:
             if(request.form.get(news_site)):
                 sources.append(news_site)
     else:
-        keywords = request.args.get('keywords').replace(" ","").split(',')
+        keywords = StringToList(request.args.get('keywords'))
         for news_site in News_Sites:
             if (request.args.get(news_site)):
                 sources.append(news_site)
@@ -48,9 +48,11 @@ def projet():
     #             #db.session.add(article)
     #             #db.session.commit()
     # articles_list = sorted(articles_list, key=lambda x: x.note, reverse=True) #Triés par préférences des utilisateurs
-    articles_list = find_article_db_and_news(keywords,sources)
+
+    articles_list = find_article_api_from(keywords, 2, sources)
+    #articles_list = find_article_db_and_news(keywords,sources)
     return render_template('projet.html',
-                            articleList = articles_list[0:2], # on affiche que les 2 premiers articles
+                            articleList = articles_list, # on affiche que les 2 premiers articles
                             searchedKeywords = stringOfKeywords,)
 
 @app.route('/', methods=['GET', 'POST'])
@@ -111,7 +113,7 @@ def register_signup():
     password = hashing.hash_value(password, salt='GrisThibVeloCast')
     # generation du wordcloud lors du sign up
     keywords = StringToList(interests)
-    articles = find_article_news(keywords, 5)
+    articles = find_api(keywords, 5)
     if(user_not_in_database(username)):
         db.session.add(User(username = username,
                             password = password,

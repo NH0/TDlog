@@ -194,3 +194,107 @@ def get_source_site_from_url(url):
     L = url.split('.')
     source_site = L[0].split('/')[2]
     print(source_site)
+
+
+
+def find_api(keywords, nb_article):
+    """
+    fonction renvoyant une liste d'article (la classe Article_c) depuis une recherche google news
+    input :
+    1- keywords : une liste de mots clefs de la forme ['keyword1','keyword2',...]
+    2- nb_article : un entier, nombre d'articles a renvoyer
+    output :
+    1- articlesMatched = une liste des articles trouvés sur google news
+    """
+    stringOfKeywords = listToString(keywords) # insensible à la casse, string avec les mots clés séparés par une ','
+    articlesMatched = []
+    articles = get_api(keywords, nb_article)
+    length = min(nb_article, len(articles))
+    print("length = {}".format(length))
+    for i in range(length):
+        url = articles[i]['url']
+        print(url)
+        title = articles[i]['title']
+        #content = articles[i]['content']
+        description = articles[i]['description']
+        source = articles[i]['source']['name']
+        article = Article(url)
+        article.download()
+        article.parse()
+        article.nlp()
+        content = article.text
+        #print('meta_site_name = {}'.format(article.meta_site_name))
+        articlesMatched.append(Article_c(url = url,
+                                title = title,
+                                text = content,
+                                summary = description,
+                                keywords = stringOfKeywords,
+                                source_url = url,
+                                site_name = source))
+    return(articlesMatched)
+
+
+def find_api_from(keywords, nb_article, sources):
+    """
+    fonction renvoyant une liste d'article (la classe Article_c) depuis une recherche google news provenant de certaines sources
+    input :
+    1- keywords : une liste de mots clefs de la forme ['keyword1','keyword2',...]
+    2- nb_article : un entier, nombre d'articles a renvoyer
+    output :
+    1- articlesMatched = une liste des articles trouvés sur google news
+    """
+    stringOfKeywords = listToString(keywords) # insensible à la casse, string avec les mots clés séparés par une ','
+    articlesMatched = []
+    urls = []
+    for source in sources:
+        articles = get_api(keywords, nb_article, source)
+        for i in range(nb_article):
+            urls.append(articles[i]['url'])
+
+    nb_sites = len(urls)
+    if nb_sites != 0:
+        ## A RAJOUTER: SI ON ARRIVE AU BOUT DE LA LISTE ET QUON A PAS TROUVE D'ARTICLES, IL FAUT LE PRECISER
+        for i in range(nb_article):
+            url = articles[i]['url']
+            print(url)
+            title = articles[i]['title']
+            #content = articles[i]['content']
+            description = articles[i]['description']
+            source = articles[i]['source']['name']
+            article = Article(url)
+            article.download()
+            article.parse()
+            article.nlp()
+            content = article.text
+            articlesMatched.append(Article_c(url = url,
+                                    title = title,
+                                    text = content,
+                                    summary = description,
+                                    keywords = stringOfKeywords,
+                                    source_url = url,
+                                    site_name = source))
+    else:
+        articlesMatched.append(Article_c(url = '',
+                                    title = "Pas de résultats",
+                                    text = "Désolé, nous n'avons malheureusement pas trouvé de résultats",
+                                    summary = "article.summary",
+                                    keywords = "Rien du tout",
+                                    source_url = "du coup y en a pas",
+                                    site_name = "article.meta_site_name"))
+    return(articlesMatched)
+
+
+def find_article_api_from(keywords, nb_article=2, sources=[]):
+    articles_list = find_article_db(keywords, sources, nb_article)  # cherche l'article dans la base de données
+    if (articles_list == 0):    # si aucun article ne correspond dans la BDD, le chercher sur google news
+        if len(sources)==0:
+            articles_list = find_api(keywords, nb_article)   # cherche nb_article articles
+        else:
+            articles_list = find_api_from(keywords, nb_article, sources) # cherche l'article dans la base de données en ne gardant que les articles provenant de certains sites d'information
+            #for article in articles_list:
+                #article.keyword=listToString(liteClient.getKeywords(article.text.encode('utf-8')))))
+                #Cette etape prend du temps, il faut trouver un autre endroit pour le faire
+                #db.session.add(article)
+                #db.session.commit()
+    articles_list = sorted(articles_list, key=lambda x: x.note, reverse=True) #Triés par préférences des utilisateurs
+    return articles_list
