@@ -6,12 +6,31 @@
   <div class="starter-template">
     <div class="row">
       <div class="col-lg-6">
-        <p><strong>My name:</strong> {{ username }}</p>
-        <p><strong>My interests:</strong> {% for interest in interests %}<a href="/article?keywords={{ interest }}" style="color: rgb(37,48,64)">{{ interest }}</a>{% if interest != interests[-1] %}, {% endif %}{% endfor %}.</p>
-        <p><strong>Today's selection:</strong></p>
-        {% for article in recommendation %}
-        <p><a target="_blank" href="{{ article.url }}" style="color: rgb(37,48,64)" >{{ article.title }}</a></p>
-        {% endfor %}
+        <div class="row">
+          <div class="col-lg-12">
+            <p><strong>My name:</strong> {{ username }}</p>
+          </div>
+        </div>
+        <div class="row">
+          <div class="col-lg-12">
+            <p><strong>My interests:</strong> {% for interest in interests %}<a href="/article?keywords={{ interest }}" style="color: rgb(37,48,64)">{{ interest }}</a>{% if interest != interests[-1] %}, {% endif %}{% endfor %}.</p>
+          </div>
+        </div>
+        <div class="row">
+          <div class="col-lg-12">
+            <form class="form-horizontal col-lg-6" action="/profile" method="POST">
+              <input type="text" class="form-control" name="add-interest" placeholder="Add some interests">
+            </form>
+          </div>
+        </div>
+        <div class="row">
+          <div class="col-lg-12">
+            <p><strong>Today's selection:</strong></p>
+            {% for article in recommendation %}
+            <p><a target="_blank" href="{{ article.url }}" style="color: rgb(37,48,64)" >{{ article.title }}</a></p>
+            {% endfor %}
+          </div>
+        </div>
       </div>
       <div class="col-lg-6">
         <p><strong><center>Today's trends:</center></strong></p>

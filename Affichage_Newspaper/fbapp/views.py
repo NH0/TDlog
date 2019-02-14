@@ -30,28 +30,32 @@ def projet():
             if (request.args.get(news_site)):
                 sources.append(news_site)
 
-    # for key in keywords:
-    #     key = key.lower() # insensible à la casse
-    keywords = formatKeywords(keywords)
-    stringOfKeywords = listToString(keywords)
+    if keywords != ["" for k in range(len(keywords))]:
+        # for key in keywords:
+        #     key = key.lower() # insensible à la casse
+        keywords = formatKeywords(keywords)
+        stringOfKeywords = listToString(keywords)
 
-    # articles_list = find_article_db(keywords, sources)  # cherche l'article dans la base de données
-    #
-    # if (articles_list == 0):    # si aucun article ne correspond dans la BDD, le chercher sur google news
-    #     if len(sources)==0:
-    #         articles_list = find_article_news(keywords, nb_article = 2)   # cherche nb_article articles
-    #     else:
-    #         articles_list = find_article_news_from(keywords, 2, sources) # cherche l'article dans la base de données en ne gardant que les articles provenant de certains sites d'information
-    #         #for article in articles_list:
-    #             #article.keyword=listToString(liteClient.getKeywords(article.text.encode('utf-8')))))
-    #             #Cette etape prend du temps, il faut trouver un autre endroit pour le faire
-    #             #db.session.add(article)
-    #             #db.session.commit()
-    # articles_list = sorted(articles_list, key=lambda x: x.note, reverse=True) #Triés par préférences des utilisateurs
-    articles_list = find_article_db_and_news(keywords,sources)
-    return render_template('projet.html',
-                            articleList = articles_list[0:2], # on affiche que les 2 premiers articles
-                            searchedKeywords = stringOfKeywords,)
+        # articles_list = find_article_db(keywords, sources)  # cherche l'article dans la base de données
+        #
+        # if (articles_list == 0):    # si aucun article ne correspond dans la BDD, le chercher sur google news
+        #     if len(sources)==0:
+        #         articles_list = find_article_news(keywords, nb_article = 2)   # cherche nb_article articles
+        #     else:
+        #         articles_list = find_article_news_from(keywords, 2, sources) # cherche l'article dans la base de données en ne gardant que les articles provenant de certains sites d'information
+        #         #for article in articles_list:
+        #             #article.keyword=listToString(liteClient.getKeywords(article.text.encode('utf-8')))))
+        #             #Cette etape prend du temps, il faut trouver un autre endroit pour le faire
+        #             #db.session.add(article)
+        #             #db.session.commit()
+        # articles_list = sorted(articles_list, key=lambda x: x.note, reverse=True) #Triés par préférences des utilisateurs
+        articles_list = find_article_db_and_news(keywords,sources)
+        return render_template('projet.html',
+                                articleList = articles_list[0:2], # on affiche que les 2 premiers articles
+                                searchedKeywords = stringOfKeywords,)
+    else:
+        flash("You have to enter a keyword")
+        return redirect(url_for("home"))
 
 @app.route('/', methods=['GET', 'POST'])
 @app.route('/home/')
@@ -129,6 +133,12 @@ def register_signup():
 @app.route('/profile', methods=['GET', 'POST'])
 def profile():
     if ('logged_in' in session) and session['logged_in']:
+        if request.method == 'POST':
+            new_interest = request.form['add-interest']
+            user = User.query.filter_by(username = session['username']).first()
+            user.interests = user.interests + ', ' + new_interest
+            db.session.merge(user)
+            db.session.commit()
         # keywords = StringToList(find_interests_in_db(session['username']))
         # articles = find_article_news(keywords, 5)
         # urls = []
