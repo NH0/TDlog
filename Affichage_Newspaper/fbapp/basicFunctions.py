@@ -23,7 +23,10 @@ def listToString(keywords): # Pour l'affichage lorsqu'aucun article n'est trouvÃ
     return keystring
 
 def StringToList(str): # Pour l'affichage lorsqu'aucun article n'est trouvÃ©
-    return(str.split(', '))
+    if len(str) > 0:
+        return(str.split(', '))
+    else:
+        return(str)
 
 def time_to_parameter(time):
     if (time == 'hour'):
