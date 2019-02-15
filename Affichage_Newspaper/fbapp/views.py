@@ -42,9 +42,17 @@ def projet():
     #articles_list = find_article_db_and_news(keywords, sources, 2)
     articles_list = find_article_api_from(keywords, 2, sources)
 
-    return render_template('projet.html',
-                            articleList = articles_list, # on affiche que les 2 premiers articles
-                            searchedKeywords = stringOfKeywords)
+    if (len(articles_list)!=0):
+        return render_template('projet.html',
+                                articleList = articles_list,
+                                searchedKeywords = stringOfKeywords)
+    elif (len(articles_list)==0):
+        site = ''
+        for source in sources:
+            site = site + website_name(source) + ' & '
+        return render_template('erreur.html',
+                                keywords = stringOfKeywords,
+                                sources = site[:-2])
 
 @app.route('/', methods=['GET', 'POST'])
 @app.route('/home/')

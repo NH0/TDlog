@@ -25,9 +25,6 @@ class Article_c(db.Model):
     nbVotes = db.Column(db.Integer(), nullable=False) #On a besoin du nombre de votes pour calculer la moyenne
     # authors = db.Column(db.String(), nullable=False) A IMPLEMENTER PLUS TARD: ATTENTION, C'EST UNE LISTE D'AUTEURS QUE L'ON RECOIT GRACE A LA LIBRAIRIE PYTHON
 
-# class Article_note(db.Model):
-#     idarticle = db.Column(db.Integer, primary_key=True)
-
     def __init__(self, url, title, text, summary, keywords, source_url, site_name):
         self.url = url
         self.title = title

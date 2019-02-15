@@ -245,18 +245,18 @@ def find_api_from(keywords, nb_article, sources):
                                     keywords = stringOfKeywords,
                                     source_url = url,
                                     site_name = source))
-    else:
-        source_url = ''
-        for source in sources:
-            source_url = source_url + source + ', '
-        source_url = source_url[:-1]
-        articlesMatched.append(Article_c(url = '',
-                                    title = "no results for this combination of keywords and sources",
-                                    text = "Sorry, we haven't find any article for this combination of keywords and sources",
-                                    summary = "no results",
-                                    keywords = stringOfKeywords,
-                                    source_url = source_url,
-                                    site_name = "no results"))
+    # else:
+    #     source_url = ''
+    #     for source in sources:
+    #         source_url = source_url + source + ', '
+    #     source_url = source_url[:-1]
+    #     articlesMatched.append(Article_c(url = '',
+    #                                 title = "no results for this combination of keywords and sources",
+    #                                 text = "Sorry, we haven't find any article for this combination of keywords and sources",
+    #                                 summary = "no results",
+    #                                 keywords = stringOfKeywords,
+    #                                 source_url = source_url,
+    #                                 site_name = "no results"))
     return(articlesMatched)
 
 
