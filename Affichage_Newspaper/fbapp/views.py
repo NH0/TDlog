@@ -14,7 +14,7 @@ from newspaper import Article
 from .models import User, Article_c, Votes
 
 
-@app.route('/article', methods=['GET', 'POST'])
+@app.route('/article/', methods=['GET', 'POST'])
 def projet():
 
     sources = []
@@ -31,8 +31,6 @@ def projet():
                 sources.append(news_site)
 
     if keywords != ["" for k in range(len(keywords))]:
-        # for key in keywords:
-        #     key = key.lower() # insensible à la casse
         keywords = formatKeywords(keywords)
         stringOfKeywords = listToString(keywords)
 
@@ -75,12 +73,12 @@ def login_page():
         flash("Already logged in !")
         return redirect(url_for("home"))
 
-@app.route('/logout')
+@app.route('/logout/')
 def logout():
     session['logged_in'] = False
     return home()
 
-@app.route('/authentification', methods=['GET','POST'])
+@app.route('/authentification/', methods=['GET','POST'])
 def do_admin_login():
 
     POST_USERNAME = request.form['username']
@@ -100,7 +98,7 @@ def do_admin_login():
         flash('Wrong username/password')
         return redirect(url_for("login_page"))
 
-@app.route('/login/signup', methods=['GET','POST'])
+@app.route('/login/signup/', methods=['GET','POST'])
 def signup():
     if not(('logged_in' in session) and session['logged_in']):
         return render_template('sign-up.html')
@@ -108,7 +106,7 @@ def signup():
         flash("Already logged in !")
         return redirect(url_for("home"))
 
-@app.route('/register-signup', methods=['GET', 'POST'])
+@app.route('/register-signup/', methods=['GET', 'POST'])
 def register_signup():
     username = request.form['username']
     password = request.form['password']
@@ -137,7 +135,7 @@ def register_signup():
         return redirect(url_for("signup"))
 
 # Profile page
-@app.route('/profile', methods=['GET', 'POST'])
+@app.route('/profile/', methods=['GET', 'POST'])
 def profile():
     if ('logged_in' in session) and session['logged_in']:
         if request.method == 'POST':
@@ -166,7 +164,7 @@ def profile():
         flash("You must be logged in to view your profile !")
         return redirect(url_for("login_page"))
 
-@app.route('/rateArticle', methods=['GET','POST'])
+@app.route('/rateArticle/', methods=['GET','POST'])
 def notation():
     if ('logged_in' in session) and session['logged_in']:
 
