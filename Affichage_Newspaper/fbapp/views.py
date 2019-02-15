@@ -182,15 +182,15 @@ def profile():
         flash("You must be logged in to view your profile !")
         return redirect(url_for("login_page"))
 
-@app.route('/rateArticle', methods=['GET'])
+@app.route('/rateArticle', methods=['POST'])
 def notation():
     pprint("Inside notation")
     if ('logged_in' in session) and session['logged_in']:
 
-        # id = int(request.form['idA'])
-        # noteA = int(request.form['note'])
-        id = int(request.args.get('idA'))
-        noteA = int(request.args.get('note'))
+        id = int(request.form['idA'])
+        noteA = int(request.form['note'])
+        # id = int(request.args.get('idA'))
+        # noteA = int(request.args.get('note'))
         if noteA in [0,1,2,3,4,5]:
 
             if not( Votes.query.filter_by(userid = session['uid'],articleid = id).count() ):
@@ -211,11 +211,12 @@ def notation():
 
             else:
                 pprint("You already rated the article !")
-                #return redirect(url_for('profile'))
+                return redirect(url_for('profile'))
         else:
             pprint("Notes must be integer between 0 and 5 !")
+            return redirect(url_for('home'))
 
     else:
         session['logged_in'] = False
         pprint("You must be logged in to vote !")
-        return redirect(url_for('home'))
+        return redirect(url_for('login_page'))

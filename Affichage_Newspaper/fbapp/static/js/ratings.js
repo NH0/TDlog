@@ -1,9 +1,3 @@
-alert($)
-$(document).ready(function() {
-  alert('hello')
-  let button = $('#form-rate input');
-  button.on('click',function() {
-      alert("test")
-      $.get( '/rateArticle', {"note":$('#note').val(), "idA":$('#form-rate').attr('idA')} )
-   });
-});
+alert('helloOne')
+let button = $('#form-rate')
+button.on('click',function() { $.post( '/rateArticle', {"note":$('#note').val(), "idA":$('#form-rate').attr('idA')} ) });
