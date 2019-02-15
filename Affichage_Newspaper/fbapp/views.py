@@ -39,11 +39,20 @@ def projet():
         keywords = formatKeywords(keywords)
         stringOfKeywords = listToString(keywords)
 
+    #articles_list = find_article_db_and_news(keywords, sources, 2)
     articles_list = find_article_api_from(keywords, 2, sources)
 
-    return render_template('projet.html',
-                            articleList = articles_list, # on affiche que les 2 premiers articles
-                            searchedKeywords = stringOfKeywords)
+    if (len(articles_list)!=0):
+        return render_template('projet.html',
+                                articleList = articles_list,
+                                searchedKeywords = stringOfKeywords)
+    elif (len(articles_list)==0):
+        site = ''
+        for source in sources:
+            site = site + website_name(source) + ' & '
+        return render_template('erreur.html',
+                                keywords = stringOfKeywords,
+                                sources = site[:-2])
 
 @app.route('/', methods=['GET', 'POST'])
 @app.route('/home/')
@@ -87,7 +96,7 @@ def do_admin_login():
         flash('Wrong username/password')
         return redirect(url_for("login_page"))
 
-@app.route('/login/signup', methods=['GET','POST'])
+@app.route('/login/signup/', methods=['GET','POST'])
 def signup():
     if not(('logged_in' in session) and session['logged_in']):
         return render_template('sign-up.html')
@@ -125,7 +134,7 @@ def register_signup():
 
         session['username'] = username
 
-        # generation du wordcloud lors du sign u
+        # generation du wordcloud lors du sign-up
         cloud_name = session['username']+'_daily'
         wordcloud_url(urls, 20, cloud_name)
         cloud_path = 'css/images/' + cloud_name + '.png'
@@ -160,20 +169,13 @@ def profile():
                     user.interests = user.interests + ', ' + new_interest
                     db.session.merge(user)
                     db.session.commit()
-        # keywords = StringToList(find_interests_in_db(session['username']))
-        # articles = find_article_news(keywords, 5)
-        # urls = []
-        # for article in articles:
-        #     urls.append(article.url)
-        # cloud = wordcloud_url(urls, 20, session['username']+'_daily')
+
         interests = StringToList(find_interests_in_db(session['username']))
         recom = find_recommandation_in_db(session['username'])
         cloud_name = find_cloud_path_in_db(session['username'])
         return render_template('profile.html',
                                 username = session['username'],
                                 interests = interests,
-                                #wordcloEnter at least one interest pleaseud = cloud,
-                                #cloud_name = save_wordcloud(cloud, session['username']+'_daily'),
                                 cloud_name = cloud_name,
                                 recommendation = recom)
     else:
