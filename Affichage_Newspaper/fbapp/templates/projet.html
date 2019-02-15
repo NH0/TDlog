@@ -36,38 +36,42 @@
       <p>   {{ article.text|e }}</p>
     </div>
   </div>
-  <div class="row">
-    <div class="col-lg-10">
-      {% if article.nbVotes > 0 %}
-      <p><strong> This article is rated {{ article.note }}/5 by users. </strong></p>
-      {% else %}
-      <p><strong> This article is not yet rated by users. </strong></p>
-      {% endif %}
-      <form id="form-rate" idA="{{ article.idarticle }}">
-        <label for="note" class="col-lg-6 control-label">Let us know your preferences ! Rate this article</label>
-        <div class="col-lg-1">
-          <select required id="note" class=form-control style="width: auto">
-            <option value="0">0</option>
-            <option value="1">1</option>
-            <option value="2">2</option>
-            <option selected value="3">3</option>
-            <option value="4">4</option>
-            <option value="5">5</option>
-          </select>
-        </div>
-        <div class="col-lg-2">
-          <div class="button">
-            <button class="form-control" >Rate !</button>
-             <!--ajouter attribue onclick="nomFctJS(article.id)" nomFctJS devra utiliser une autre fct pour recup valeur de select en jquery
-          ("note").val() faire JSON AJAX ou bien document.getElementById("note") get.JSON{nomderoute, {...}}-->
-          </div>
 
+  {% if article.nbVotes > 0 %}
+    <p> This article is rated {{ article.note }}/5 by users. </p>
+    {% else %}
+    <p> This article is not yet rated by users. </p>
+  {% endif %}
+
+  <form id="form-rate" idA="{{ article.idarticle }}">
+    Let us know your preferences ! Rate this article
+    <select required id="note">
+      <option value="0">0</option>
+      <option value="1">1</option>
+      <option value="2">2</option>
+      <option selected value="3">3</option>
+      <option value="4">4</option>
+      <option value="5">5</option>
+    </select> stars.
+    <input type="button" value="Rate !">
+  </form>
+
+ <div id="flash-messages">
+  {% with messages = get_flashed_messages() %}
+    {% if messages %}
+      {% for message in messages %}
+      <div class="row">
+        <div class="col-lg-12">
+          <p><span style="font-size: 12px">{{ message }}</span></p>
         </div>
-      </form>
-      <script type="text/javascript" src="/static/js/ratings.js">
-      </script>
-    </div>
+      </div>
+      {% endfor %}
+    {% endif %}
+  {% endwith %}
   </div>
+  
+  <script type="text/javascript" src="/static/js/ratings.js"></script>
+
   <hr color="blue">
 </div>
 

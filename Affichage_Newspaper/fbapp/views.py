@@ -1,7 +1,7 @@
 from flask import Flask, render_template, url_for, request, session, flash, redirect
 from flask_sqlalchemy import SQLAlchemy
 from flask_hashing import Hashing
-from pprint import pprint
+# from pprint import pprint #used for debugging
 
 app = Flask(__name__) # Base de données pour les articles, les utilisateurs et les notes
 app.config.from_object('config')
@@ -182,39 +182,46 @@ def profile():
 
 @app.route('/rateArticle', methods=['POST'])
 def notation():
-    pprint("Inside notation")
+
     if ('logged_in' in session) and session['logged_in']:
 
-        id = int(request.form['idA'])
-        noteA = int(request.form['note'])
-        # id = int(request.args.get('idA'))
-        # noteA = int(request.args.get('note'))
-        if noteA in [0,1,2,3,4,5]:
+        if request.form['idA'] and request.form['note']: #Not empty post
 
-            if not( Votes.query.filter_by(userid = session['uid'],articleid = id).count() ):
+            # POST method
+            id = int(request.form['idA'])
+            noteA = int(request.form['note'])
 
-                articleNoted = Article_c.query.filter_by(idarticle = id).first()
-                articleNoted.note = round((articleNoted.note * articleNoted.nbVotes + noteA) / (articleNoted.nbVotes + 1),1)
-                articleNoted.nbVotes = articleNoted.nbVotes + 1
+            # GET method
+            # id = int(request.args.get('idA'))
+            # noteA = int(request.args.get('note'))
 
-                db.session.merge(articleNoted)
-                db.session.commit()
+            if noteA in [0,1,2,3,4,5]:
 
-                db.session.add(Votes(userid=session['uid'],
-                                     articleid=id,
-                                     note = noteA))
-                db.session.commit()
-                pprint("You rated \""+articleNoted.title+"\" "+str(noteA)+"/5.")
-                return redirect(url_for('profile'))
+                if not( Votes.query.filter_by(userid = session['uid'],articleid = id).count() ):
+
+                    articleNoted = Article_c.query.filter_by(idarticle = id).first()
+                    articleNoted.note = round((articleNoted.note * articleNoted.nbVotes + noteA) / (articleNoted.nbVotes + 1),1)
+                    articleNoted.nbVotes = articleNoted.nbVotes + 1
+
+                    db.session.merge(articleNoted)
+                    db.session.commit()
+
+                    db.session.add(Votes(userid=session['uid'],
+                                         articleid=id,
+                                         note = noteA))
+                    db.session.commit()
+                    flash("You rated \""+articleNoted.title+"\" "+str(noteA)+"/5.")
+
+                else:
+                    flash("You already rated the article !")
 
             else:
-                pprint("You already rated the article !")
-                return redirect(url_for('profile'))
+                flash("Notes must be integer between 0 and 5 !")
+
         else:
-            pprint("Notes must be integer between 0 and 5 !")
-            return redirect(url_for('home'))
+            flash("No note or article found !")
 
     else:
         session['logged_in'] = False
-        pprint("You must be logged in to vote !")
-        return redirect(url_for('login_page'))
+        flash("You must be logged in to vote !")
+    return ('',204)
