@@ -116,4 +116,4 @@ def init_db_votes():
     db.drop_all(bind='votes')
     db.create_all(bind='votes')
     db.session.commit()
-    lg.warning('User Votes database initialized !')
+    lg.warning('Votes database initialized !')

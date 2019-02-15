@@ -1,5 +1,4 @@
 import random as rd
-# from nltk.corpus import wordnet
 from itertools import chain
 
 from fbapp.models import Article_c
@@ -19,11 +18,10 @@ def find_article_db_and_news(keywords,sources=[],numberOfArticles=2):
             articles_list = find_article_news(keywords, numberOfArticles)   # cherche nb_article articles
         else:
             articles_list = find_article_news_from(keywords, numberOfArticles, sources) # cherche l'article dans la base de données en ne gardant que les articles provenant de certains sites d'information
-            #for article in articles_list:
-                #article.keyword=listToString(liteClient.getKeywords(article.text.encode('utf-8')))))
-                #Cette etape prend du temps, il faut trouver un autre endroit pour le faire
-                #db.session.add(article)
-                #db.session.commit()
+            for article in articles_list:
+                article.keyword=listToString(liteClient.getKeywords(article.text.encode('utf-8')))
+                db.session.add(article)
+                db.session.commit()
     articles_list = sorted(articles_list, key=lambda x: x.note, reverse=True) #Triés par préférences des utilisateurs
 
     return articles_list
@@ -77,28 +75,6 @@ def find_article_db(keywords, sources,numberOfArticles=2): #prend en argument un
 
 News_Sites = ['https://www.theguardian.com','https://www.nytimes.com','https://www.economist.com']
 
-# def find_article_by_keywords_from(keywords, checked):
-#     articles_found = find_article_by_keywords(keywords)
-#     for k in range(len(checked)):
-#         if ()
-#     for article in articles_found:
-#
-
-
-# def findSynonyms(word):
-#     SetOfSynonyms = wordnet.synsets(word)
-#     synonyms = set([]) # Unique elements
-#     for syn in SetOfSynonyms:
-#         for name in syn.lemma_names():
-#             synonyms.add(name)
-#         for hyperList in syn.hypernyms():
-#             for hyper in hyperList.lemma_names():
-#                 synonyms.add(hyper)
-#         for hypoList in syn.hyponyms():
-#             for hypo in hypoList.lemma_names():
-#                 synonyms.add(hypo)
-#     return (synonyms)
-
 def find_article_online(keywords, website):
     stringOfKeywords = listToString(keywords) # insensible à la casse, string avec les mots clés séparés par une ','
     articlesMatched = []
@@ -108,7 +84,6 @@ def find_article_online(keywords, website):
         article.download()
         article.parse()
         article.nlp()
-        #print('meta_site_name = {}'.format(article.meta_site_name))
         articlesMatched.append(Article_c(url = url,
                                 title = article.title,
                                 text = article.text,
@@ -136,7 +111,6 @@ def find_article_news(keywords, nb_article):
         article.download()
         article.parse()
         article.nlp()
-        #print('meta_site_name = {}'.format(article.meta_site_name))
         articlesMatched.append(Article_c(url = url,
                                 title = article.title,
                                 text = article.text,
@@ -215,7 +189,6 @@ def find_api(keywords, nb_article):
         url = articles[i]['url']
         print(url)
         title = articles[i]['title']
-        #content = articles[i]['content']
         description = articles[i]['description']
         source = articles[i]['source']['name']
         article = Article(url)
@@ -223,7 +196,6 @@ def find_api(keywords, nb_article):
         article.parse()
         article.nlp()
         content = article.text
-        #print('meta_site_name = {}'.format(article.meta_site_name))
         articlesMatched.append(Article_c(url = url,
                                 title = title,
                                 text = content,
@@ -248,7 +220,8 @@ def find_api_from(keywords, nb_article, sources):
     urls = []
     for source in sources:
         articles = get_api(keywords, nb_article, source)
-        for i in range(nb_article):
+        length = min(nb_article, len(articles))
+        for i in range(length):
             urls.append(articles[i]['url'])
 
     nb_sites = len(urls)
@@ -258,7 +231,6 @@ def find_api_from(keywords, nb_article, sources):
             url = articles[i]['url']
             print(url)
             title = articles[i]['title']
-            #content = articles[i]['content']
             description = articles[i]['description']
             source = articles[i]['source']['name']
             article = Article(url)
@@ -274,13 +246,17 @@ def find_api_from(keywords, nb_article, sources):
                                     source_url = url,
                                     site_name = source))
     else:
+        source_url = ''
+        for source in sources:
+            source_url = source_url + source + ', '
+        source_url = source_url[:-1]
         articlesMatched.append(Article_c(url = '',
-                                    title = "Pas de résultats",
-                                    text = "Désolé, nous n'avons malheureusement pas trouvé de résultats",
-                                    summary = "article.summary",
-                                    keywords = "Rien du tout",
-                                    source_url = "du coup y en a pas",
-                                    site_name = "article.meta_site_name"))
+                                    title = "no results for this combination of keywords and sources",
+                                    text = "Sorry, we haven't find any article for this combination of keywords and sources",
+                                    summary = "no results",
+                                    keywords = stringOfKeywords,
+                                    source_url = source_url,
+                                    site_name = "no results"))
     return(articlesMatched)
 
 
@@ -291,10 +267,9 @@ def find_article_api_from(keywords, nb_article=2, sources=[]):
             articles_list = find_api(keywords, nb_article)   # cherche nb_article articles
         else:
             articles_list = find_api_from(keywords, nb_article, sources) # cherche l'article dans la base de données en ne gardant que les articles provenant de certains sites d'information
-            #for article in articles_list:
-                #article.keyword=listToString(liteClient.getKeywords(article.text.encode('utf-8')))))
-                #Cette etape prend du temps, il faut trouver un autre endroit pour le faire
-                #db.session.add(article)
-                #db.session.commit()
+            # for article in articles_list:
+            #     article.keyword=listToString(liteClient.getKeywords(article.text.encode('utf-8')))
+            #     db.session.add(article)
+            #     db.session.commit()
     articles_list = sorted(articles_list, key=lambda x: x.note, reverse=True) #Triés par préférences des utilisateurs
     return articles_list

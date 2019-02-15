@@ -38,6 +38,25 @@ def time_to_parameter(time):
     elif (time == 'month'):
         return('qdr:m')
 
+def website_name(adress):
+    site = ''
+    if (adress == 'http://www.nytimes.com'):
+        site = 'the-new-york-times'
+    elif (adress == 'https://www.theguardian.com'):
+        site = 'the-guardian-uk'
+    elif (adress == 'https://www.economist.com'):
+        site = 'the-economist'
+    elif (adress == 'http://www.huffingtonpost.com'):
+        site = 'the-huffington-post'
+    elif (adress == 'http://time.com'):
+        site = 'time'
+    elif (adress == 'http://www.theverge.com'):
+        site = 'the-verge'
+    return(site)
+
+
+
+
 def google_news_website(keywords, website, nb_article, time = '0'):
     """
     fonction faisant une recherche sur google classique
@@ -110,7 +129,6 @@ def display_wordcloud(wordcloud):
 def save_wordcloud(wordcloud, file_name):
     path = 'css/images/' + file_name + '.png'
     save_path = 'fbapp/static/' + path
-    #print('path = {}'.format(path))
     print('save_path = {}'.format(save_path))
     wordcloud.to_file(save_path)
     return(path)
@@ -184,22 +202,13 @@ def get_api(keywords, nb_article, website=''):
     query = ''
     for keyword in keywords:
         query += keyword + ' '
-    if (len(website)!=0):
-        query += 'site:' + website
-    #top_headlines = newsapi.get_top_headlines(q=query, language='en', country='gb')
     search = newsapi.get_everything(q=query, language='en')
+    if (len(website)!=0):
+        print("website={}".format(website))
+        site = website_name(website)
+        search = newsapi.get_everything(q=query, sources=site, language='en')
     articles = search["articles"]
     return(articles)
 
 if __name__ == '__main__':
-    # sites = google_news_search('politics', nb_article = 5, time = 'day')
-    # wordcloud2(['politics', 'brexit'], 20, 'test5')
-    #print(upload_wordcloud('static/css/images', 'clems_daily'))
-    # fichier = open('fbapp/texte.txt', 'r')
-    # text = fichier.read()
-    # stop_english = get_stop_words('english')
-    # test = create_wordcloud(text, 20, stop_english)
-    # #display_wordcloud(test)
-    # save_wordcloud(test, 'transparent')
-    # #test = google_news_website(['cesq', 'fabregas', 'monaco'], 'www.mirror.co.uk', 2)
     get_api(['bitcoin', 'island'], 5)

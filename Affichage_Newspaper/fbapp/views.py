@@ -14,7 +14,7 @@ from newspaper import Article
 from .models import User, Article_c, Votes
 
 
-@app.route('/article/', methods=['GET', 'POST'])
+@app.route('/article', methods=['GET', 'POST'])
 def projet():
 
     sources = []
@@ -39,6 +39,7 @@ def projet():
         keywords = formatKeywords(keywords)
         stringOfKeywords = listToString(keywords)
 
+    #articles_list = find_article_db_and_news(keywords, sources, 2)
     articles_list = find_article_api_from(keywords, 2, sources)
 
     return render_template('projet.html',
@@ -62,12 +63,12 @@ def login_page():
         flash("Already logged in !")
         return redirect(url_for("home"))
 
-@app.route('/logout/')
+@app.route('/logout')
 def logout():
     session['logged_in'] = False
     return home()
 
-@app.route('/authentification/', methods=['GET','POST'])
+@app.route('/authentification', methods=['GET','POST'])
 def do_admin_login():
 
     POST_USERNAME = request.form['username']
@@ -87,7 +88,7 @@ def do_admin_login():
         flash('Wrong username/password')
         return redirect(url_for("login_page"))
 
-@app.route('/login/signup/', methods=['GET','POST'])
+@app.route('/login/signup', methods=['GET','POST'])
 def signup():
     if not(('logged_in' in session) and session['logged_in']):
         return render_template('sign-up.html')
@@ -95,7 +96,7 @@ def signup():
         flash("Already logged in !")
         return redirect(url_for("home"))
 
-@app.route('/register-signup/', methods=['GET', 'POST'])
+@app.route('/register-signup', methods=['GET', 'POST'])
 def register_signup():
     username = request.form['username']
     password = request.form['password']
@@ -125,7 +126,7 @@ def register_signup():
 
         session['username'] = username
 
-        # generation du wordcloud lors du sign u
+        # generation du wordcloud lors du sign-up
         cloud_name = session['username']+'_daily'
         wordcloud_url(urls, 20, cloud_name)
         cloud_path = 'css/images/' + cloud_name + '.png'
@@ -146,7 +147,7 @@ def register_signup():
         return redirect(url_for("signup"))
 
 # Profile page
-@app.route('/profile/', methods=['GET', 'POST'])
+@app.route('/profile', methods=['GET', 'POST'])
 def profile():
     if ('logged_in' in session) and session['logged_in']:
         if request.method == 'POST':
@@ -160,27 +161,20 @@ def profile():
                     user.interests = user.interests + ', ' + new_interest
                     db.session.merge(user)
                     db.session.commit()
-        # keywords = StringToList(find_interests_in_db(session['username']))
-        # articles = find_article_news(keywords, 5)
-        # urls = []
-        # for article in articles:
-        #     urls.append(article.url)
-        # cloud = wordcloud_url(urls, 20, session['username']+'_daily')
+
         interests = StringToList(find_interests_in_db(session['username']))
         recom = find_recommandation_in_db(session['username'])
         cloud_name = find_cloud_path_in_db(session['username'])
         return render_template('profile.html',
                                 username = session['username'],
                                 interests = interests,
-                                #wordcloEnter at least one interest pleaseud = cloud,
-                                #cloud_name = save_wordcloud(cloud, session['username']+'_daily'),
                                 cloud_name = cloud_name,
                                 recommendation = recom)
     else:
         flash("You must be logged in to view your profile !")
         return redirect(url_for("login_page"))
 
-@app.route('/rateArticle/', methods=['GET'])
+@app.route('/rateArticle', methods=['GET'])
 def notation():
     pprint("Inside notation")
     if ('logged_in' in session) and session['logged_in']:
