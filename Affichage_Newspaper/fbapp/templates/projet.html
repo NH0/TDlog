@@ -64,18 +64,7 @@
 
         </div>
       </form>
-      <script>
-        var formRate = document.getElementById('form-rate');
-        var button = formRate.getElementsByTagName('input')[0];
-        button.onClick = function() {
-            alert("test");
-            var note = document.getElementById('note').value;
-            var idA = formRate.getAttribute('idA');
-            var xmlHttp = new XMLHttpRequest();
-            xmlHttp.open( "GET", '/rateArticle?note='+note+'&idA='+idA, false ); // false for synchronous request
-            xmlHttp.send( null );
-            return xmlHttp.responseText;
-        }
+      <script type="text/javascript" src="/static/js/ratings.js">
       </script>
     </div>
   </div>
