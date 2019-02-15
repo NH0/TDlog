@@ -96,7 +96,7 @@ def do_admin_login():
         flash('Wrong username/password')
         return redirect(url_for("login_page"))
 
-@app.route('/login/signup', methods=['GET','POST'])
+@app.route('/login/signup/', methods=['GET','POST'])
 def signup():
     if not(('logged_in' in session) and session['logged_in']):
         return render_template('sign-up.html')

@@ -227,7 +227,7 @@ def find_api_from(keywords, nb_article, sources):
     nb_sites = len(urls)
     if nb_sites != 0:
         ## A RAJOUTER: SI ON ARRIVE AU BOUT DE LA LISTE ET QUON A PAS TROUVE D'ARTICLES, IL FAUT LE PRECISER
-        for i in range(nb_article):
+        for i in range(nb_sites):
             url = articles[i]['url']
             print(url)
             title = articles[i]['title']
