@@ -189,26 +189,29 @@ def notation():
         # noteA = int(request.form['note'])
         id = int(request.args.get('idA'))
         noteA = int(request.args.get('note'))
+        if noteA in [0,1,2,3,4,5]:
 
-        if not( Votes.query.filter_by(userid = session['uid'],articleid = id).count() ):
+            if not( Votes.query.filter_by(userid = session['uid'],articleid = id).count() ):
 
-            articleNoted = Article_c.query.filter_by(idarticle = id).first()
-            articleNoted.note = round((articleNoted.note * articleNoted.nbVotes + noteA) / (articleNoted.nbVotes + 1),1)
-            articleNoted.nbVotes = articleNoted.nbVotes + 1
+                articleNoted = Article_c.query.filter_by(idarticle = id).first()
+                articleNoted.note = round((articleNoted.note * articleNoted.nbVotes + noteA) / (articleNoted.nbVotes + 1),1)
+                articleNoted.nbVotes = articleNoted.nbVotes + 1
 
-            db.session.merge(articleNoted)
-            db.session.commit()
+                db.session.merge(articleNoted)
+                db.session.commit()
 
-            db.session.add(Votes(userid=session['uid'],
-                                 articleid=id,
-                                 note = noteA))
-            db.session.commit()
-            pprint("You rated \""+articleNoted.title+"\" "+str(noteA)+"/5.")
-            return redirect(url_for('profile'))
+                db.session.add(Votes(userid=session['uid'],
+                                     articleid=id,
+                                     note = noteA))
+                db.session.commit()
+                pprint("You rated \""+articleNoted.title+"\" "+str(noteA)+"/5.")
+                return redirect(url_for('profile'))
 
+            else:
+                pprint("You already rated the article !")
+                #return redirect(url_for('profile'))
         else:
-            pprint("You already rated the article !")
-            #return redirect(url_for('profile'))
+            pprint("Notes must be integer between 0 and 5 !")
 
     else:
         session['logged_in'] = False

@@ -65,14 +65,17 @@
         </div>
       </form>
       <script>
-        $(document).ready(function() {
-          alert('hello');
-          let button = $('#form-rate input');
-          button.on('click',function() {
-              alert("test");
-              $.get( '/rateArticle', {"note":$('#note').val(), "idA":$('#form-rate').attr('idA')} )
-           });
-        });
+        var formRate = document.getElementById('form-rate');
+        var button = formRate.getElementsByTagName('input')[0];
+        button.onClick = function() {
+            alert("test");
+            var note = document.getElementById('note').value;
+            var idA = formRate.getAttribute('idA');
+            var xmlHttp = new XMLHttpRequest();
+            xmlHttp.open( "GET", '/rateArticle?note='+note+'&idA='+idA, false ); // false for synchronous request
+            xmlHttp.send( null );
+            return xmlHttp.responseText;
+        }
       </script>
     </div>
   </div>
