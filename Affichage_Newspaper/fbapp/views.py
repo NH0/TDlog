@@ -1,6 +1,7 @@
 from flask import Flask, render_template, url_for, request, session, flash, redirect
 from flask_sqlalchemy import SQLAlchemy
 from flask_hashing import Hashing
+from flask_socketio import SocketIO,emit
 from pprint import pprint #used for debugging
 import retinasdk
 
@@ -8,6 +9,7 @@ app = Flask(__name__) # Base de données pour les articles, les utilisateurs et 
 app.config.from_object('config')
 db = SQLAlchemy(app)
 hashing = Hashing(app)
+socketio = SocketIO(app)
 
 api_key="eabe2bc0-1286-11e9-bb65-69ed2d3c7927"
 
@@ -210,8 +212,8 @@ def profile():
         flash("You must be logged in to view your profile !")
         return redirect(url_for("login_page"))
 
-@app.route('/rateArticle', methods=['POST'])
-def notation():
+@socketio.on('notationA')
+def notation(noteA,urlA):
     """
     Traitement des notes d'articles
     L'objectif est de ne pas recharger la page d'articles en notant
@@ -220,57 +222,48 @@ def notation():
     """
     # Bien connecté
     if ('logged_in' in session) and session['logged_in']:
-        # Requête non vide
-        if request.form['urlA'] and request.form['note']: #Not empty post
 
-            urlA = str(request.form['urlA'])
-            noteA = int(request.form['note'])
+        urlA = str(urlA)
+        noteA = int(noteA)
 
+        articleNoted = Article_c.query.filter_by(source_url = urlA).first()
+
+        # Article est ou non dans la base de données
+        if articleNoted == None:
+            add_article_to_db(urlA)
+            db.session.commit()
             articleNoted = Article_c.query.filter_by(source_url = urlA).first()
 
-            # Article est ou non dans la base de données
-            if articleNoted == None:
-                add_article_to_db(urlA)
+        id = int(articleNoted.idarticle)
+
+        # Pas de trucage de note
+        if noteA in [0,1,2,3,4,5]:
+
+            #Si l'utilisateur n'a pas déjà voté
+            if not( Votes.query.filter_by(userid = session['uid'],articleid = id).count() ):
+
+                # Modification de la table article
+                articleNoted = Article_c.query.filter_by(idarticle = id).first()
+                articleNoted.note = round((articleNoted.note * articleNoted.nbVotes + noteA) / (articleNoted.nbVotes + 1),1)
+                articleNoted.nbVotes = articleNoted.nbVotes + 1
+
+                db.session.merge(articleNoted)
                 db.session.commit()
-                articleNoted = Article_c.query.filter_by(source_url = urlA).first()
 
-            id = int(articleNoted.idarticle)
+                # Ajout du nouveau vote dans la table Votes
+                db.session.add(Votes(userid=session['uid'],
+                                     articleid=id,
+                                     note = noteA))
+                db.session.commit()
 
-            # Pas de trucage de note
-            if noteA in [0,1,2,3,4,5]:
-
-                #Si l'utilisateur n'a pas déjà voté
-                if not( Votes.query.filter_by(userid = session['uid'],articleid = id).count() ):
-
-                    # Modification de la table article
-                    articleNoted = Article_c.query.filter_by(idarticle = id).first()
-                    articleNoted.note = round((articleNoted.note * articleNoted.nbVotes + noteA) / (articleNoted.nbVotes + 1),1)
-                    articleNoted.nbVotes = articleNoted.nbVotes + 1
-
-                    db.session.merge(articleNoted)
-                    db.session.commit()
-
-                    # Ajout du nouveau vote dans la table Votes
-                    db.session.add(Votes(userid=session['uid'],
-                                         articleid=id,
-                                         note = noteA))
-                    db.session.commit()
-
-                    flash("You rated \""+articleNoted.title+"\" "+str(noteA)+"/5.")
-
-                else:
-                    flash("You already rated the article !")
+                emit('response',"You rated\""+articleNoted.title+"\" "+str(noteA)+"/5.")
 
             else:
-                flash("Notes must be integer between 0 and 5 !")
+                emit('response',"You already rated the article !")
 
         else:
-            flash("No note or article found !")
+            emit('response',"Notes must be integer between 0 and 5 !")
 
     else:
         session['logged_in'] = False
-        flash("You must be logged in to vote !")
-
-    # Dans tous les cas, retour 204 : No content
-    # car on ne veut rien renvoyer (à part les messages)
-    return ('',204)
+        emit('response',"You must be logged in to vote !")
