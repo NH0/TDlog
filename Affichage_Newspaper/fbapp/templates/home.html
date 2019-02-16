@@ -15,8 +15,7 @@
         {% endfor %}
       {% endif %}
     {% endwith %}
-    <form class="form-horizontal col-lg-12" action="/article" method="GET"> <!-- Plutot utiliser GET, pas besoin d'avoir un requete securisée et plus simple pour rester sur la page -->
-      <div class="form-group">
+    <form class="form-horizontal col-lg-12" action="/article" method="GET"> <!-- GET pour pouvoir facilement refaire des requêtes -->
         <legend style="text-align:center"><em>Enter keywords</em></legend>
       </div>
       <div class="form-group">

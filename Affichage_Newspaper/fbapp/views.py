@@ -21,7 +21,11 @@ NUMBER_OF_ARTICLES_PER_SEARCH = 2
 
 @app.route('/article', methods=['GET', 'POST'])
 def projet():
-
+    """
+    Recherche des articles en fonctions des mots clés entrés
+    S'il n'y a pas d'articles, renvoie vers un page d'erreur
+    Sinon renvoie vers l'affichage
+    """
     sources = []
 
     if request.method == 'POST' and request.form['keyword']:
@@ -63,7 +67,10 @@ def projet():
 @app.route('/', methods=['GET', 'POST'])
 @app.route('/home/')
 def home():
-    if not('logged_in' in session):
+    """
+    Page d'accueil
+    """
+    if not('logged_in' in session): # Permet d'initialiser la valeur de logged_in
         session['logged_in'] = False
     return render_template('home.html')
 
@@ -71,6 +78,9 @@ def home():
 # Routes relatives à l'identification des utilisateurs
 @app.route('/login', methods=['GET', 'POST'])
 def login_page():
+    """
+    Traitement du login, après authentification
+    """
     if not(('logged_in' in session) and session['logged_in']):
         return render_template('login.html')
     else:
@@ -84,7 +94,9 @@ def logout():
 
 @app.route('/authentification', methods=['GET','POST'])
 def do_admin_login():
-
+    """
+    Traitement des informations entrées pour se connecter au site
+    """
     POST_USERNAME = request.form['username']
     POST_PASSWORD = request.form['password']
 
@@ -104,6 +116,9 @@ def do_admin_login():
 
 @app.route('/login/signup/', methods=['GET','POST'])
 def signup():
+    """
+    Page d'inscription
+    """
     if not(('logged_in' in session) and session['logged_in']):
         return render_template('sign-up.html')
     else:
@@ -112,6 +127,10 @@ def signup():
 
 @app.route('/register-signup', methods=['GET', 'POST'])
 def register_signup():
+    """
+    Traitement des informations entrées lors de l'inscription
+    Il y a quelques contraintes, comme le mdp à plus de 6 caracters
+    """
     username = request.form['username']
     password = request.form['password']
     interests = request.form['interests']
@@ -130,21 +149,23 @@ def register_signup():
 
     password = hashing.hash_value(password, salt='GrisThibVeloCast')
 
-    keywords = StringToList(interests)
-    articles = find_api(keywords, 3)
-    urls = []
-    for article in articles:
-        urls.append(article.url)
-
-    if(user_not_in_database(username)):
+    if(user_not_in_database(username)): # On verifie qu'il n'existe pas déjà un utilisateur avec le même nom
 
         session['username'] = username
+
+        # On recherche des articles en lien avec ses intérêts lors du sign up
+        keywords = StringToList(interests)
+        articles = find_api(keywords, 3)
+        urls = []
+        for article in articles:
+            urls.append(article.url)
 
         # generation du wordcloud lors du sign-up
         cloud_name = session['username']+'_daily'
         wordcloud_url(urls, 20, cloud_name)
         cloud_path = 'css/images/' + cloud_name + '.png'
 
+        # Ajout de l'utilisateur nouvellement inscrit
         db.session.add(User(username = username,
                             password = password,
                             interests = interests,
@@ -152,6 +173,7 @@ def register_signup():
                             cloud_path = cloud_path))
         db.session.commit()
 
+        # Authentification automatique lors de l'inscription
         session['uid'] = User.query.filter_by(username=username).first().id
         session['logged_in'] = True
         flash("You are now registered and logged in, welcome :)")
@@ -190,9 +212,15 @@ def profile():
 
 @app.route('/rateArticle', methods=['POST'])
 def notation():
-
+    """
+    Traitement des notes d'articles
+    L'objectif est de ne pas recharger la page d'articles en notant
+    Donc l'appel se fait par du JS d'où le retour 204
+    Lorsque l'on note un article qui n'est pas dans la base de données, il est ajouté
+    """
+    # Bien connecté
     if ('logged_in' in session) and session['logged_in']:
-
+        # Requête non vide
         if request.form['urlA'] and request.form['note']: #Not empty post
 
             urlA = str(request.form['urlA'])
@@ -200,6 +228,7 @@ def notation():
 
             articleNoted = Article_c.query.filter_by(source_url = urlA).first()
 
+            # Article est ou non dans la base de données
             if articleNoted == None:
                 add_article_to_db(urlA)
                 db.session.commit()
@@ -207,10 +236,13 @@ def notation():
 
             id = int(articleNoted.idarticle)
 
+            # Pas de trucage de note
             if noteA in [0,1,2,3,4,5]:
 
+                #Si l'utilisateur n'a pas déjà voté
                 if not( Votes.query.filter_by(userid = session['uid'],articleid = id).count() ):
 
+                    # Modification de la table article
                     articleNoted = Article_c.query.filter_by(idarticle = id).first()
                     articleNoted.note = round((articleNoted.note * articleNoted.nbVotes + noteA) / (articleNoted.nbVotes + 1),1)
                     articleNoted.nbVotes = articleNoted.nbVotes + 1
@@ -218,6 +250,7 @@ def notation():
                     db.session.merge(articleNoted)
                     db.session.commit()
 
+                    # Ajout du nouveau vote dans la table Votes
                     db.session.add(Votes(userid=session['uid'],
                                          articleid=id,
                                          note = noteA))
@@ -237,4 +270,7 @@ def notation():
     else:
         session['logged_in'] = False
         flash("You must be logged in to vote !")
+
+    # Dans tous les cas, retour 204 : No content
+    # car on ne veut rien renvoyer (à part les messages)
     return ('',204)

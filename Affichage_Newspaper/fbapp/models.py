@@ -13,6 +13,9 @@ db = SQLAlchemy(app)
 api_key="eabe2bc0-1286-11e9-bb65-69ed2d3c7927"
 
 class Article_c(db.Model):
+    """
+    Table contenant les articles
+    """
     idarticle = db.Column(db.Integer, primary_key=True)
     url = db.Column(db.String(400), nullable=False)
     title = db.Column(db.String(200), nullable=False)
@@ -22,8 +25,7 @@ class Article_c(db.Model):
     site_name = db.Column(db.String(200), nullable=False)
     summary = db.Column(db.String(), nullable=False)
     note = db.Column(db.Float(), nullable=False)
-    nbVotes = db.Column(db.Integer(), nullable=False) #On a besoin du nombre de votes pour calculer la moyenne
-    # authors = db.Column(db.String(), nullable=False) A IMPLEMENTER PLUS TARD: ATTENTION, C'EST UNE LISTE D'AUTEURS QUE L'ON RECOIT GRACE A LA LIBRAIRIE PYTHON
+    nbVotes = db.Column(db.Integer(), nullable=False)
 
     def __init__(self, url, title, text, summary, keywords, source_url, site_name):
         self.url = url
@@ -35,17 +37,23 @@ class Article_c(db.Model):
         self.site_name = site_name
         self.note = 0.0
         self.nbVotes = 0
-        # self.authors = authors
 
 def keywords(api_key,Text):
+    """
+    Renvoie les mots clés d'un texte en utilisant l'API retinasdk
+    """
 	liteClient = retinasdk.LiteClient(api_key)
 	return(liteClient.getKeywords(data("Text.txt")))
 
-def add_article_to_db(url): # Automatisation du processus pour ajouter une entrée à la base de données, pour l'instant il faut renseigner soi meme les keywords
+def add_article_to_db(url):
+    """
+    Ajout d'un article à la base de données à partir de son url
+    Le changement n'est pas "commit" par la fonction
+    """
     liteClient = retinasdk.LiteClient(api_key)
     article = Article(url)
     article.download()
-    article.parse() # insensible à la casse, string avec les mots clés séparés par une ','
+    article.parse()
     db.session.add(Article_c(url = url,
                             title = article.title,
                             text = article.text,
@@ -54,11 +62,11 @@ def add_article_to_db(url): # Automatisation du processus pour ajouter une entr�
                             source_url = url,
                             site_name = article.source_url))
 
-"""
-keywords doit être une liste de keywords : ['keyword1','keyword2','keyword3']
-"""
 
 def init_db():
+    """
+    Initialisation de la base de données avec 3 articles
+    """
     db.drop_all()
     db.create_all()
     add_article_to_db('https://www.theguardian.com/media/2018/nov/16/bbc-women-complain-andrew-neil-tweet-observer-journalist-carole-cadwalladr')
@@ -67,8 +75,12 @@ def init_db():
     db.session.commit()
     lg.warning('Article database initialized !')
 
-## Définition de la table Users qui contient les identifiants et mots de passe des users
+
+
 class User(db.Model):
+    """
+    Table contenant les identifiants utilisateurs (bien sûr les mots de passe sont hashés)
+    """
     __bind_key__ = 'users'
     id = db.Column(db.Integer, primary_key=True)
     username = db.Column(db.String(50), nullable=False)
@@ -84,15 +96,21 @@ class User(db.Model):
         self.recommendation = recommendation
         self.cloud_path = cloud_path
 
-# POUR INITIALISER LA BASE DE DONNEES CONTENANT LES MOTS DE PASSE, IL FAUT LANCER DANS LA CONSOLE FLASK_APP=run.py flask init_db_login
 def init_db_login():
+    """
+    Initialisation de la table Users uniquement
+    """
     db.drop_all(bind='users')
     db.create_all(bind='users')
     db.session.commit()
     lg.warning('User accounts database initialized !')
 
-# Table qui contient les articles notés par chaque utilisateur et la note associée (permet d'éviter de noter 2 fois un même article)
+
+
 class Votes(db.Model):
+    """
+    Table contenant chaque vote
+    """
     __bind_key__ = 'votes'
     id = db.Column(db.Integer, primary_key=True)
     userid = db.Column(db.Integer, nullable=False)
@@ -104,8 +122,10 @@ class Votes(db.Model):
         self.articleid = articleid
         self.note = note
 
-# POUR INITIALISER LA BASE DE DONNEES CONTENANT LES MOTS DE PASSE, IL FAUT LANCER DANS LA CONSOLE FLASK_APP=run.py flask init_db_votes
 def init_db_votes():
+    """
+    Initialisation de la table Votes uniquement
+    """
     db.drop_all(bind='votes')
     db.create_all(bind='votes')
     db.session.commit()

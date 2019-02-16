@@ -38,7 +38,7 @@ def time_to_parameter(time):
     elif (time == 'month'):
         return('qdr:m')
 
-def website_name(adress):
+def website_name(adress): # Method exhaustive, piste d'amélioration
     site = ''
     if (adress == 'http://www.nytimes.com'):
         site = 'the-new-york-times'
@@ -103,7 +103,6 @@ def google_news_search(keywords, nb_article, time = '0'):
         time = time_to_parameter(time)
     sites = []
     count = 0
-    #for url in search(query, tld='com', lang='en', num=10, start=0, stop=nb_article, pause=2.0, tpe='nws', params_perso='tbs=ctr:countryUK%7CcountryGB&cr=countryUK%7CcountryGB'):
     for url in search(query, tld='com', lang='en', tbs=time, num=10, start=0, stop=nb_article, pause=2.0, tpe='nws'):
         if(count < nb_article):
             sites.append(url)
@@ -165,6 +164,9 @@ Fonction qui prend un chemin et transforme en un string du texte
 
 
 def wordcloud_url(url_list, nb_words, name):
+    """
+    Creer un nuage de mots à partir d'une liste d'url d'articles
+    """
     text = ''
     for url in url_list:
         article = Article(url)
@@ -179,6 +181,9 @@ def wordcloud_url(url_list, nb_words, name):
     return(cloud)
 
 def wordcloud_keyword(keyword_list, nb_words, name):
+    """
+    Creer un nuage de mots à partir d'une liste de mots-clés
+    """
     text = ''
     url_list = google_news_search(keyword_list, nb_article = 5, time = 'day')
     for url in url_list:
@@ -194,11 +199,13 @@ def wordcloud_keyword(keyword_list, nb_words, name):
     save_wordcloud(cloud, name)
     return(cloud)
 
-# utilisation api News api
 
 newsapi = NewsApiClient(api_key=newsapi_key)
 
 def get_api(keywords, nb_article, website=''):
+    """
+    Recherche d'articles à partir de mots clés en utilisant l'API "newsapi"
+    """
     query = ''
     for keyword in keywords:
         query += keyword + ' '
