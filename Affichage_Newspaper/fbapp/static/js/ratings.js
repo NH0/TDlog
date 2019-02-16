@@ -1,5 +1,8 @@
-let button = $('#form-rate');
-button.on('click',function() { $.post( '/rateArticle', {"note":$('#note').val(), "idA":$('#form-rate').attr('idA')} ) });
-let flashMsg = $('#flash-messages')
-setTimeout(function () {}, 100);
-flashMsg.load('/templates/projet.html' + 'messages');
+function ratingsA(nbArticles) {
+  var i;
+  var button = [];
+  for (i = 0; i<nbArticles; i++) {
+    button.push($('#form-rate'+i.toString()));
+    button[i].on('click',function() { $.post( '/rateArticle', {"note":$('#note').val(), "urlA":$('#form-rate'+i.toString()).attr('urlA')} ) });
+  }
+}

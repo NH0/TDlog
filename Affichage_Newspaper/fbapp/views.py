@@ -1,17 +1,22 @@
 from flask import Flask, render_template, url_for, request, session, flash, redirect
 from flask_sqlalchemy import SQLAlchemy
 from flask_hashing import Hashing
-# from pprint import pprint #used for debugging
+from pprint import pprint #used for debugging
+import retinasdk
 
 app = Flask(__name__) # Base de données pour les articles, les utilisateurs et les notes
 app.config.from_object('config')
 db = SQLAlchemy(app)
 hashing = Hashing(app)
 
+api_key="eabe2bc0-1286-11e9-bb65-69ed2d3c7927"
+
 from .utils import * # Fonctions utilitaires,
 from .utils_authentification import *
 from newspaper import Article
-from .models import User, Article_c, Votes
+from .models import *
+
+NUMBER_OF_ARTICLES_PER_SEARCH = 2
 
 
 @app.route('/article', methods=['GET', 'POST'])
@@ -40,12 +45,13 @@ def projet():
         stringOfKeywords = listToString(keywords)
 
     #articles_list = find_article_db_and_news(keywords, sources, 2)
-    articles_list = find_article_api_from(keywords, 2, sources)
+    articles_list = find_article_api_from(keywords, NUMBER_OF_ARTICLES_PER_SEARCH, sources)
 
     if (len(articles_list)!=0):
         return render_template('projet.html',
                                 articleList = articles_list,
-                                searchedKeywords = stringOfKeywords)
+                                searchedKeywords = stringOfKeywords,
+                                numberOfArticles = [i for i in range(len(articles_list))])
     elif (len(articles_list)==0):
         site = ''
         for source in sources:
@@ -187,15 +193,19 @@ def notation():
 
     if ('logged_in' in session) and session['logged_in']:
 
-        if request.form['idA'] and request.form['note']: #Not empty post
+        if request.form['urlA'] and request.form['note']: #Not empty post
 
-            # POST method
-            id = int(request.form['idA'])
+            urlA = str(request.form['urlA'])
             noteA = int(request.form['note'])
 
-            # GET method
-            # id = int(request.args.get('idA'))
-            # noteA = int(request.args.get('note'))
+            articleNoted = Article_c.query.filter_by(source_url = urlA).first()
+
+            if articleNoted == None:
+                add_article_to_db(urlA)
+                db.session.commit()
+                articleNoted = Article_c.query.filter_by(source_url = urlA).first()
+
+            id = int(articleNoted.idarticle)
 
             if noteA in [0,1,2,3,4,5]:
 
@@ -212,6 +222,7 @@ def notation():
                                          articleid=id,
                                          note = noteA))
                     db.session.commit()
+
                     flash("You rated \""+articleNoted.title+"\" "+str(noteA)+"/5.")
 
                 else:
