@@ -42,8 +42,8 @@ def keywords(api_key,Text):
     """
     Renvoie les mots clés d'un texte en utilisant l'API retinasdk
     """
-	liteClient = retinasdk.LiteClient(api_key)
-	return(liteClient.getKeywords(data("Text.txt")))
+    liteClient = retinasdk.LiteClient(api_key)
+    return(liteClient.getKeywords(data("Text.txt")))
 
 def add_article_to_db(url):
     """

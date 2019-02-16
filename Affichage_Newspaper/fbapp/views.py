@@ -17,7 +17,7 @@ from newspaper import Article
 from .models import *
 
 NUMBER_OF_ARTICLES_PER_SEARCH = 2
-
+News_Sites = ['https://www.theguardian.com','https://www.nytimes.com','https://www.economist.com']
 
 @app.route('/article', methods=['GET', 'POST'])
 def projet():

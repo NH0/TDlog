@@ -12,6 +12,31 @@ def formatKeywords(keywords):
         key = key.lower()
     return keywords
 
+def find_article_db(keywords, sources,numberOfArticles=2): #prend en argument une liste de string contenant les mots clés
+    """
+    Recherche dans la base de données en fonctions des mots clés (et des sources)
+    """
+    articlesMatched = []
+    if len(sources)>0:
+        for key in keywords:
+            article_list = Article_c.query.filter(Article_c.keywords.ilike('%'+key+'%'), Article_c.source_url in sources).all() # on regarde si le mot-clé fait partie des mots-clés de l'article
+            if(len(article_list) > 0):
+                article = rd.choice(article_list)
+                articlesMatched.append(article)
+    else:
+        for key in keywords:
+            article_list = Article_c.query.filter(Article_c.keywords.ilike('%'+key+'%')).all() # on regarde si le mot-clé fait partie des mots-clés de l'article
+            if(len(article_list) > 0):
+                article = rd.choice(article_list)
+                articlesMatched.append(article)
+    if (len(articlesMatched)>0):
+        if (numberOfArticles<len(articlesMatched) and numberOfArticles>0):
+            return articlesMatched[:numberOfArticles-1]
+        else:
+            return articlesMatched
+    else:
+        return 0
+
 
 def find_api(keywords, nb_article):
     """
@@ -95,13 +120,17 @@ def find_article_api_from(keywords, nb_article=2, sources=[]):
     à afficher
     """
     articles_list = find_article_db(keywords, sources, nb_article)  # cherche l'article dans la base de données
-    nbFound = len(articles_list)
+    if articles_list != 0:
+        nbFound = len(articles_list)
+    else:
+        nbFound = 0
+        articles_list = []
 
     if (nbFound < nb_article):    # si pas assez d'article ne correspondent dans la BDD, les chercher sur google news
         if len(sources)==0:
-            articles_list = find_api(keywords, nb_article-nbFound)   # cherche les articles restants
+            articles_list += find_api(keywords, nb_article-nbFound)   # cherche les articles restants
         else:
-            articles_list = find_api_from(keywords, nb_article-nbFound, sources) # cherche les articles avec l'api en ne gardant que les articles provenant de certains sites d'information
+            articles_list += find_api_from(keywords, nb_article-nbFound, sources) # cherche les articles avec l'api en ne gardant que les articles provenant de certains sites d'information
 
     articles_list = sorted(articles_list, key=lambda x: x.note, reverse=True) #Triés par préférences des utilisateurs
 
